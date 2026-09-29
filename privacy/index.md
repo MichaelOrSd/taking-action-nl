@@ -4,6 +4,8 @@ permalink: /privacy/
 ---
 # Privacy
 
+**This site is privacy first.** It exists so residents can organise without handing their personal information to an advertising business or a data broker. We collect the least a petition needs, we show the public only a count, we never sell or share what you give us, and we remove anyone who asks. The code is open source, so anyone can check that these words match what the site does.
+
 Plain language, because that is the point.
 
 ## What we collect when you sign

@@ -9,6 +9,10 @@ permalink: /
   <p><a class="btn btn-primary" href="#petitions">See open petitions</a> <a class="btn" href="{{ '/start/' | relative_url }}">Start a petition</a></p>
 </section>
 
+<section class="note privacy-first">
+  <p><strong>Privacy first.</strong> We collect only what a petition needs: your name, address, a signature and an email to confirm it is you. Nothing is sold, shared with advertisers or used for anything but the petition you signed. Your signature is never shown online; only the count is. The people who see your name are the organiser and the public body the petition is delivered to, and every petition tells you who that is before you sign. You can be removed from the online list by asking. <a href="{{ '/privacy/' | relative_url }}">Read the whole policy</a>; it fits on one page.</p>
+</section>
+
 <section id="petitions">
   <h2>Open petitions</h2>
   <ul class="petition-list">

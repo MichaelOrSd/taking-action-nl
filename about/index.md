@@ -10,7 +10,7 @@ It began with one street in Conception Bay South, where neighbours reported fume
 
 ## What we believe
 
-- People should be able to act together without paying anyone or handing their data to a company overseas.
+- **Privacy first.** People should be able to act together without paying anyone or handing their data to a company overseas. This site collects the minimum a petition needs, shows the public only a count, never sells or shares data, and removes anyone who asks. The code is open so anyone can check that is true.
 - A petition should be honest about what it is. It asks. It does not order. Its power is the number of people behind it and the record it creates.
 - The rules for being heard should be written down where everyone can read them. Ours are on the [start a petition](/start/) page.
 
