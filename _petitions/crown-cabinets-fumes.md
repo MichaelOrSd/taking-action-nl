@@ -18,7 +18,7 @@ local_area:
   - Paradise
 paper: true
 paper_locations:
-  - Ask a canvasser to bring the petition to your door (tick the box when you sign online, or email the organiser).
+  - Starbucks, Conception Bay South
 background: |
   Since November 2025, residents living near Crown Cabinets and Fireplaces Ltd., 2638–2640 Topsail Road, Conception Bay South, have repeatedly reported strong paint- and lacquer-type fumes entering their homes and yards, with symptoms including headaches, nausea and eye and throat irritation. The facility and the homes around it are in the Town's Residential Mixed (R-3) zone.
 
