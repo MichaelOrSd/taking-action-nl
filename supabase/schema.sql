@@ -92,5 +92,5 @@ $$;
 grant execute on function public.petition_counts(text) to anon, authenticated;
 
 -- First organiser for the first petition (edit before running).
-insert into public.organisers (email, petition_slug) values ('ma.oreilly@icloud.com', 'crown-cabinets-fumes')
+insert into public.organisers (email, petition_slug) values ('michaeloreilly@me.com', 'crown-cabinets-fumes')
   on conflict do nothing;
