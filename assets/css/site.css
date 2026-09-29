@@ -34,9 +34,9 @@ h2 { font-size: 1.35rem; margin: 2rem 0 .6rem; } h3 { font-size: 1.1rem; margin:
 .organiser { color: var(--muted); font-size: .95rem; }
 .sign { margin-top: 2.5rem; padding-top: 1rem; border-top: 1px solid var(--line); }
 .sign-form .field { margin: .9rem 0; } .sign-form label { display: block; font-weight: 600; margin-bottom: .3rem; }
-.sign-form input[type=text], .sign-form input[type=email], .sign-form select { width: 100%; padding: .65rem .7rem; border: 1px solid var(--line); border-radius: .45rem; background: var(--card); color: var(--ink); font: inherit; }
+.sign-form input[type=text], .sign-form input[type=email], .sign-form input[type=tel], .sign-form select { width: 100%; padding: .65rem .7rem; border: 1px solid var(--line); border-radius: .45rem; background: var(--card); color: var(--ink); font: inherit; }
 .row { display: grid; grid-template-columns: 2fr 2fr 1fr; gap: .8rem; align-items: end; } .row .field { margin: .9rem 0 0; } .row label { white-space: nowrap; }
-.sign-form select { height: 2.75rem; } .sign-form input[type=text], .sign-form input[type=email] { height: 2.75rem; }
+.sign-form select { height: 2.75rem; } .sign-form input[type=text], .sign-form input[type=email], .sign-form input[type=tel] { height: 2.75rem; }
 @media (max-width: 640px) { .row { grid-template-columns: 1fr; } .row .field { margin: .9rem 0 0; } }
 label.req::after { content: " *"; color: var(--accent); font-weight: 700; } .req-mark { color: var(--accent); font-weight: 700; }
 .opt, .hint { color: var(--muted); font-weight: 400; font-size: .9rem; } .hint { margin: .3rem 0 0; }
