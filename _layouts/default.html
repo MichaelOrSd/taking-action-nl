@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="{{ site.lang }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>{% if page.title %}{{ page.title }} · {% endif %}{{ site.title }}</title>
+  <meta name="description" content="{{ page.summary | default: page.description | default: site.description | strip_html | truncate: 160 }}">
+  <meta property="og:title" content="{{ page.title | default: site.title }}">
+  <meta property="og:description" content="{{ page.summary | default: site.description | strip_html | truncate: 200 }}">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="{{ page.url | absolute_url }}">
+  <link rel="canonical" href="{{ page.url | absolute_url }}">
+  <link rel="stylesheet" href="{{ '/assets/css/site.css' | relative_url }}">
+  <script>window.TA = { baseurl: "{{ site.baseurl }}", province: "{{ site.platform.province }}", provinceCode: "{{ site.platform.province_code }}" };</script>
+  <script src="{{ '/assets/js/config.js' | relative_url }}"></script>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <a class="brand" href="{{ '/' | relative_url }}">
+      <span class="brand-mark" aria-hidden="true">NL</span>
+      <span class="brand-name">{{ site.title }}</span>
+    </a>
+    <nav class="site-nav" aria-label="Main">
+      <a href="{{ '/#petitions' | relative_url }}">Petitions</a>
+      <a href="{{ '/start/' | relative_url }}">Start one</a>
+      <a href="{{ '/projects/' | relative_url }}">Projects</a>
+      <a href="{{ '/about/' | relative_url }}">About</a>
+    </nav>
+  </header>
+
+  <main id="main" class="site-main">
+    {{ content }}
+  </main>
+
+  <footer class="site-footer">
+    <p><strong>{{ site.title }}</strong>. {{ site.tagline }}.</p>
+    <p>A petition asks. It does not order. Petitions on this site are not legally binding on anyone; they show how many people want a thing done, and they put that on the record.</p>
+    <p>
+      <a href="{{ '/about/' | relative_url }}">About</a> ·
+      <a href="{{ '/privacy/' | relative_url }}">Privacy</a> ·
+      <a href="{{ '/start/' | relative_url }}">Start a petition</a> ·
+      <a href="https://github.com/MichaelOrSd/taking-action-nl">Source code</a>
+    </p>
+    <p class="muted">Run by {{ site.platform.owner }} · {{ site.platform.contact }} · Not affiliated with any government, town or political party.</p>
+  </footer>
+</body>
+</html>

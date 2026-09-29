@@ -1,0 +1,37 @@
+---
+title: Thank you
+permalink: /thanks/
+---
+<h1>Thank you</h1>
+<p id="thanks-msg">Confirming your signature…</p>
+<div id="thanks-next" hidden>
+  <p class="note"><strong>Your signature is confirmed and counted.</strong></p>
+  <h2>Two more things that help</h2>
+  <ol>
+    <li><a id="print-link" class="btn" href="#">Print your House of Assembly signing page</a> and sign it in ink. The House accepts paper only.</li>
+    <li>Share the petition: <a id="share-link" href="#"></a></li>
+  </ol>
+  <p><a id="back-link" href="#">Back to the petition</a></p>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script>
+(async function () {
+  const params = new URLSearchParams(location.search);
+  const slug = params.get('p') || '';
+  const base = (window.TA && window.TA.baseurl) || '';
+  const msg = document.getElementById('thanks-msg');
+  document.getElementById('print-link').href = base + '/print/?p=' + encodeURIComponent(slug);
+  const url = location.origin + base + '/p/' + slug + '/';
+  const share = document.getElementById('share-link'); share.href = url; share.textContent = url;
+  document.getElementById('back-link').href = url;
+  if (!window.TA || /YOUR-PROJECT/.test(window.TA.supabaseUrl)) { msg.textContent = 'Signing is not switched on yet.'; return; }
+  const sb = window.supabase.createClient(window.TA.supabaseUrl, window.TA.supabaseAnonKey);
+  // The magic link puts the session in the URL hash; the client picks it up.
+  const { data: { session } } = await sb.auth.getSession();
+  if (!session) { msg.textContent = 'This link has expired or was already used. If your signature is not counted, sign again and click the new link.'; return; }
+  const { data, error } = await sb.rpc('confirm_my_signature', { p_slug: slug });
+  if (error) { msg.textContent = 'Could not confirm: ' + error.message; return; }
+  msg.hidden = true; document.getElementById('thanks-next').hidden = false;
+  await sb.auth.signOut();
+})();
+</script>

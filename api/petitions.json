@@ -1,0 +1,27 @@
+---
+layout: null
+permalink: /api/petitions.json
+---
+{
+  "generated": "{{ site.time | date_to_xmlschema }}",
+  "platform": {{ site.title | jsonify }},
+  "petitions": [
+  {% for p in site.petitions %}
+    {
+      "slug": {{ p.slug | jsonify }},
+      "title": {{ p.title | jsonify }},
+      "status": {{ p.status | jsonify }},
+      "opened": {{ p.opened | date: "%Y-%m-%d" | jsonify }},
+      "community": {{ p.community | jsonify }},
+      "summary": {{ p.summary | jsonify }},
+      "organiser": {{ p.organiser | jsonify }},
+      "organiser_contact": {{ p.organiser_contact | jsonify }},
+      "paper": {{ p.paper | default: false }},
+      "local_area": {{ p.local_area | default: empty | jsonify }},
+      "background": {{ p.background | jsonify }},
+      "asks": {{ p.asks | jsonify }},
+      "url": {{ p.url | absolute_url | jsonify }}
+    }{% unless forloop.last %},{% endunless %}
+  {% endfor %}
+  ]
+}

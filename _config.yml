@@ -1,0 +1,39 @@
+title: Taking Action NL
+tagline: Petitions by the people of Newfoundland and Labrador
+description: A free, open platform for residents of Newfoundland and Labrador to organise petitions to councils, the House of Assembly and public bodies.
+url: "https://michaelorsd.github.io"
+baseurl: "/taking-action-nl"
+lang: en
+
+# Organisation running this instance
+platform:
+  owner: Michael O'Reilly
+  contact: ma.oreilly@icloud.com
+  province: Newfoundland and Labrador
+  province_code: NL
+
+collections:
+  petitions:
+    output: true
+    permalink: /p/:name/
+
+defaults:
+  - scope:
+      path: ""
+      type: petitions
+    values:
+      layout: petition
+  - scope:
+      path: ""
+    values:
+      layout: default
+
+markdown: kramdown
+exclude:
+  - README.md
+  - LICENSE
+  - Gemfile
+  - Gemfile.lock
+  - supabase/
+  - node_modules/
+  - vendor/
