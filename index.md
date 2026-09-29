@@ -19,9 +19,10 @@ permalink: /
   {% assign open = site.petitions | where: "status", "open" | sort: "opened" | reverse %}
   {% for p in open %}
     <li>
-      <a href="{{ p.url | relative_url }}">{{ p.title }}</a><br>
-      <span class="muted">{{ p.community }} · opened {{ p.opened | date: "%B %-d, %Y" }}</span><br>
+      <a class="title" href="{{ p.url | relative_url }}">{{ p.title }}</a>
+      <span class="meta">{{ p.community }} · opened {{ p.opened | date: "%B %-d, %Y" }} · organised by {{ p.organiser }}</span>
       {{ p.summary }}
+      <a class="go" href="{{ p.url | relative_url }}">Read and sign →</a>
     </li>
   {% endfor %}
   {% if open.size == 0 %}<li class="muted">No open petitions yet.</li>{% endif %}
@@ -31,7 +32,7 @@ permalink: /
   {% if closed.size > 0 %}
   <h2>Delivered and closed</h2>
   <ul class="petition-list">
-  {% for p in closed %}<li><a href="{{ p.url | relative_url }}">{{ p.title }}</a> <span class="muted">· {{ p.status }}</span></li>{% endfor %}
+  {% for p in closed %}<li><a class="title" href="{{ p.url | relative_url }}">{{ p.title }}</a><span class="meta">{{ p.community }} · {{ p.status }}</span></li>{% endfor %}
   </ul>
   {% endif %}
 </section>
