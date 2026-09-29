@@ -28,7 +28,7 @@ Update emails are sent only if you ticked the box. Every one has an unsubscribe 
 
 ## Removal
 
-Email the organiser or {{ site.platform.contact }} and ask to be removed. We remove your signature from the online list. We cannot remove a name from a petition already delivered on paper.
+Reply to your confirmation email, or ask at the signing location, and you will be removed. We remove your signature from the online list. We cannot remove a name from a petition already delivered on paper.
 
 ## Where the data lives
 

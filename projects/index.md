@@ -8,4 +8,4 @@ Taking Action NL is one of several resident-run projects in Newfoundland and Lab
 
 - **Community Exchange NL**: a community mutual credit network for Newfoundland and Labrador. [communityexchangenl](https://github.com/MichaelOrSd/communityexchangenl)
 
-If you run a resident-led project in the province and want it listed, email {{ site.platform.contact }}.
+If you run a resident-led project in the province and want it listed, open an issue on the [source repository](https://github.com/MichaelOrSd/taking-action-nl/issues).

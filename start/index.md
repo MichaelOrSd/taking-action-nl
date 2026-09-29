@@ -4,7 +4,7 @@ permalink: /start/
 ---
 # Start a petition
 
-Anyone in Newfoundland and Labrador can propose a petition for this site. Email {{ site.platform.contact }} with the four things below. Petitions are reviewed before they go live so that every one on this site meets the same standard; that protects your petition as much as the site.
+Anyone in Newfoundland and Labrador can propose a petition for this site. Send the four things below to the organisers (details on any of our paper petitions, or open an issue on the [source repository](https://github.com/MichaelOrSd/taking-action-nl/issues)). Petitions are reviewed before they go live so that every one on this site meets the same standard; that protects your petition as much as the site.
 
 ## What to send
 

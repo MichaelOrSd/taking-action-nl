@@ -5,8 +5,8 @@ status: open
 opened: 2026-09-29
 community: Conception Bay South
 summary: Residents near the cabinet-manufacturing facility at 2638–2640 Topsail Road report paint and lacquer fumes entering their homes. We ask the Town and the Province to put public safety and health first and act so the fumes stay on the facility's own lot.
-organiser: Michael O'Reilly
-organiser_contact: michaeloreilly@me.com
+organiser: a resident of Topsail Road, Conception Bay South
+organiser_contact: ""
 local_area:
   - Conception Bay South
   - Chamberlains

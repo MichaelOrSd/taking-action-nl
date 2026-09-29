@@ -7,8 +7,8 @@ lang: en
 
 # Organisation running this instance
 platform:
-  owner: Michael O'Reilly
-  contact: michaeloreilly@me.com
+  owner: residents of Conception Bay South
+  contact: ""   # leave empty to show no public email; contact details are given on the paper petition
   province: Newfoundland and Labrador
   province_code: NL
 

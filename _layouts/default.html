@@ -43,7 +43,7 @@
       <a href="{{ '/start/' | relative_url }}">Start a petition</a> ·
       <a href="https://github.com/MichaelOrSd/taking-action-nl">Source code</a>
     </p>
-    <p class="muted">Run by {{ site.platform.owner }} · {{ site.platform.contact }} · Not affiliated with any government, town or political party.</p>
+    <p class="muted">Run by {{ site.platform.owner }}{% if site.platform.contact != "" %} · {{ site.platform.contact }}{% endif %} · Not affiliated with any government, town or political party.</p>
   </footer>
 </body>
 </html>
