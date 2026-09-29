@@ -96,7 +96,7 @@ $$;
 grant execute on function public.petition_counts(text) to anon, authenticated;
 
 -- First organiser for the first petition (edit before running).
-insert into public.organisers (email, petition_slug) values ('michaeloreilly@me.com', 'crown-cabinets-fumes')
+insert into public.organisers (email, petition_slug) values ('michaeloreilly@me.com', 'topsail-road-fumes')
   on conflict do nothing;
 -- Public "who has signed" wall: initials and community only, confirmed signatures only.
 -- Never returns names, addresses, emails or signature images.

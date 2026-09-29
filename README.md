@@ -16,7 +16,7 @@ Live: https://michaelorsd.github.io/taking-action-nl/
 2. **Create a Supabase project** (free tier is fine). In the SQL editor, run `supabase/schema.sql`. Edit the last statement first so the organiser email and petition slug are yours.
 3. **Auth settings** in Supabase: enable Email provider, turn off "Confirm email" double-opt-in if you like (the magic link itself is the confirmation), set Site URL to your Pages URL and add `https://<your-pages-url>/thanks/` and `/admin/` to Redirect URLs. Supabase's built-in mailer is rate-limited to a few emails an hour; connect your own SMTP (Resend, Postmark, or any provider) under Auth → SMTP before you launch.
 4. **Keys**: copy the project URL and anon key into `assets/js/config.js`. The anon key is public by design; row-level security does the protecting.
-5. **Write a petition**: copy `_petitions/crown-cabinets-fumes.md`, change the front matter, commit. It is live when Pages rebuilds (about a minute).
+5. **Write a petition**: copy `_petitions/topsail-road-fumes.md`, change the front matter, commit. It is live when Pages rebuilds (about a minute).
 6. **Organisers**: add a row to `organisers` (email, petition_slug) for each person who may see that petition's signatures. They sign in at `/admin/` with a one-time link to that email.
 
 ## Data collected

@@ -1,6 +1,6 @@
 ---
 title: Stop the fumes from 2638–2640 Topsail Road reaching our homes
-slug: crown-cabinets-fumes
+slug: topsail-road-fumes
 status: open
 opened: 2026-09-29
 community: Conception Bay South
@@ -20,16 +20,16 @@ paper: true
 paper_locations:
   - Starbucks, Conception Bay South
 background: |
-  Since November 2025, residents living near Crown Cabinets and Fireplaces Ltd., 2638–2640 Topsail Road, Conception Bay South, have repeatedly reported strong paint- and lacquer-type fumes entering their homes and yards, with symptoms including headaches, nausea and eye and throat irritation. The facility and the homes around it are in the Town's Residential Mixed (R-3) zone.
+  Since November 2025, residents living near a cabinet-manufacturing facility at 2638–2640 Topsail Road, Conception Bay South, have repeatedly reported strong paint- and lacquer-type fumes entering their homes and yards, with symptoms including headaches, nausea and eye and throat irritation. The facility and the homes around it are in the Town's Residential Mixed (R-3) zone.
 
   Complaints have been made to the Town of Conception Bay South, to Occupational Health and Safety, and to the provincial Pollution Prevention Division. Both provincial bodies have referred the matter to the Town. The Minister of Municipal and Community Affairs has written that the Town is the right body to address it.
 asks:
   - to: the House of Assembly of Newfoundland and Labrador
-    how: presented by a Member on paper, with original signatures
+    how: presented by a Member on paper; the House accepts original ink signatures only, so the online list does not go to the House
     text: |
       We, the undersigned, call upon the House of Assembly to urge the Government of Newfoundland and Labrador to put public safety and health first: to investigate the emissions from this facility under the *Environmental Protection Act*, to require any controls necessary to stop fumes reaching neighbouring homes, and to report the results to residents.
   - to: the Council of the Town of Conception Bay South
-    how: tabled under "Visitors, Presentations, Petitions" at a public council meeting
+    how: tabled under "Visitors, Presentations, Petitions" at a public council meeting, with the online list and the paper pages
     text: |
       We, the undersigned residents, ask Council to put the safety and health of the public ahead of every other consideration in this matter: to confirm in writing the zoning status of 2638–2640 Topsail Road; to use its powers under the *Urban and Rural Planning Act, 2000* and the *Towns and Local Service Districts Act, 2023* to require effective emission controls at the facility; and to add an odour and fumes provision to the Noise and Nuisance By-law.
 ---
