@@ -16,7 +16,7 @@ permalink: /admin/
   <div class="field"><label for="pet">Petition</label><select id="pet"></select></div>
   <p><button class="btn" id="refresh" type="button">Refresh</button> <button class="btn" id="csv" type="button">Download CSV (council list)</button> <button class="btn" id="csv-stmt" type="button">Download statement volunteers</button></p>
   <p id="stats" class="muted"></p>
-  <div style="overflow-x:auto"><table id="tbl"><thead><tr><th>Date</th><th>Name</th><th>Address</th><th>Community</th><th>Prov.</th><th>Confirmed</th><th>Local</th><th>Paper</th><th>Updates</th><th>Statement</th><th></th></tr></thead><tbody></tbody></table></div>
+  <div style="overflow-x:auto"><table id="tbl"><thead><tr><th>Date</th><th>Name</th><th>Address</th><th>Community</th><th>Prov.</th><th>Phone</th><th>Confirmed</th><th>Local</th><th>Paper</th><th>Updates</th><th>Statement</th><th></th></tr></thead><tbody></tbody></table></div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script>
@@ -32,7 +32,7 @@ permalink: /admin/
   };
   async function load() {
     const slug = $('pet').value;
-    const { data, error } = await sb.from('signatures').select('id,created_at,full_name,street,community,province,postal_code,email,confirmed,in_local_area,paper_signed,consent_updates,consent_statement').eq('petition_slug', slug).order('created_at', { ascending: false });
+    const { data, error } = await sb.from('signatures').select('id,created_at,full_name,street,community,province,postal_code,email,phone,confirmed,in_local_area,paper_signed,consent_updates,consent_statement').eq('petition_slug', slug).order('created_at', { ascending: false });
     if (error) { $('stats').textContent = error.message; return; }
     rows = data || [];
     const conf = rows.filter(r => r.confirmed).length, paper = rows.filter(r => r.paper_signed).length, local = rows.filter(r => r.in_local_area && r.confirmed).length;
@@ -41,7 +41,7 @@ permalink: /admin/
     for (const r of rows) {
       const tr = document.createElement('tr');
       const esc = s => String(s == null ? '' : s).replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
-      tr.innerHTML = '<td>' + esc(r.created_at.slice(0,10)) + '</td><td>' + esc(r.full_name) + '</td><td>' + esc(r.street) + '</td><td>' + esc(r.community) + '</td><td>' + esc(r.province) + '</td><td>' + (r.confirmed ? 'yes' : 'no') + '</td><td>' + (r.in_local_area ? 'yes' : '') + '</td><td><input type="checkbox" data-id="' + r.id + '" class="paper" ' + (r.paper_signed ? 'checked' : '') + '></td><td>' + (r.consent_updates ? 'yes' : '') + '</td><td>' + (r.consent_statement ? 'yes' : '') + '</td><td><button class="btn btn-small del" data-id="' + r.id + '" type="button">Remove</button></td>';
+      tr.innerHTML = '<td>' + esc(r.created_at.slice(0,10)) + '</td><td>' + esc(r.full_name) + '</td><td>' + esc(r.street) + '</td><td>' + esc(r.community) + '</td><td>' + esc(r.province) + '</td><td>' + esc(r.phone) + '</td><td>' + (r.confirmed ? 'yes' : 'no') + '</td><td>' + (r.in_local_area ? 'yes' : '') + '</td><td><input type="checkbox" data-id="' + r.id + '" class="paper" ' + (r.paper_signed ? 'checked' : '') + '></td><td>' + (r.consent_updates ? 'yes' : '') + '</td><td>' + (r.consent_statement ? 'yes' : '') + '</td><td><button class="btn btn-small del" data-id="' + r.id + '" type="button">Remove</button></td>';
       tb.appendChild(tr);
     }
     tb.querySelectorAll('.paper').forEach(cb => cb.onchange = async () => { await sb.from('signatures').update({ paper_signed: cb.checked }).eq('id', cb.dataset.id); });
@@ -53,7 +53,7 @@ permalink: /admin/
     const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([out], { type: 'text/csv' })); a.download = $('pet').value + '-' + (cols.includes('email') ? 'statements' : 'council') + '.csv'; a.click();
   }
   $('csv').onclick = () => csv(rows.filter(r => r.confirmed), ['created_at','full_name','street','community','province','postal_code','in_local_area','paper_signed']);
-  $('csv-stmt').onclick = () => csv(rows.filter(r => r.confirmed && r.consent_statement), ['created_at','full_name','street','community','province','email']);
+  $('csv-stmt').onclick = () => csv(rows.filter(r => r.confirmed && r.consent_statement), ['created_at','full_name','street','community','province','email','phone']);
   $('refresh').onclick = load;
   $('pet').onchange = load;
   $('out').onclick = async () => { await sb.auth.signOut(); location.reload(); };

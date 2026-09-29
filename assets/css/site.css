@@ -38,6 +38,7 @@ h2 { font-size: 1.35rem; margin: 2rem 0 .6rem; } h3 { font-size: 1.1rem; margin:
 .row { display: grid; grid-template-columns: 2fr 2fr 1fr; gap: .8rem; align-items: end; } .row .field { margin: .9rem 0 0; } .row label { white-space: nowrap; }
 .sign-form select { height: 2.75rem; } .sign-form input[type=text], .sign-form input[type=email] { height: 2.75rem; }
 @media (max-width: 640px) { .row { grid-template-columns: 1fr; } .row .field { margin: .9rem 0 0; } }
+label.req::after { content: " *"; color: var(--accent); font-weight: 700; } .req-mark { color: var(--accent); font-weight: 700; }
 .opt, .hint { color: var(--muted); font-weight: 400; font-size: .9rem; } .hint { margin: .3rem 0 0; }
 .pad-wrap { border: 1px dashed var(--line); border-radius: .5rem; background: #fff; }
 .pad-wrap canvas { display: block; width: 100%; height: 180px; touch-action: none; }

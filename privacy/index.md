@@ -10,7 +10,7 @@ Plain language, because that is the point.
 
 ## What we collect when you sign
 
-Your name, street address, community, province, postal code if you give it, email, the signature you draw, the date and time, and which boxes you ticked. We also keep a shortened record of your browser and a hashed form of your network address to detect duplicate or automated entries. Nothing else.
+Your name, street address, community, province, postal code and phone number if you give them, email, the signature you draw, the date and time, and which boxes you ticked. We also keep a shortened record of your browser and a hashed form of your network address to detect duplicate or automated entries. Nothing else.
 
 ## Why
 

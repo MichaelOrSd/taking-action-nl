@@ -21,7 +21,7 @@ Live: https://michaelorsd.github.io/taking-action-nl/
 
 ## Data collected
 
-Name, street, community, province, postal code (optional), email, drawn signature (PNG data URL), consent flags, timestamp, browser string. Emails and browser strings are never shown publicly. See `privacy/index.md`.
+Name, street, community, province, postal code (optional), phone (optional), email, drawn signature (PNG data URL), consent flags, timestamp, browser string. Emails and browser strings are never shown publicly. See `privacy/index.md`.
 
 ## Local preview
 

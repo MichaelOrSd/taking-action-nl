@@ -1,19 +1,20 @@
 <form id="sign-form" class="sign-form" novalidate>
+  <p class="hint">Fields marked <span class="req-mark">*</span> are required.</p>
   <div class="field">
-    <label for="full_name">Full name</label>
+    <label for="full_name" class="req">Full name</label>
     <input id="full_name" name="full_name" type="text" autocomplete="name" required maxlength="120">
   </div>
   <div class="field">
-    <label for="street">Street address</label>
+    <label for="street" class="req">Street address</label>
     <input id="street" name="street" type="text" autocomplete="street-address" required maxlength="160" placeholder="e.g. 2644 Topsail Road">
   </div>
   <div class="row">
     <div class="field">
-      <label for="community">Community</label>
+      <label for="community" class="req">Community</label>
       <input id="community" name="community" type="text" autocomplete="address-level2" required maxlength="80" placeholder="e.g. Conception Bay South">
     </div>
     <div class="field">
-      <label for="province">Province</label>
+      <label for="province" class="req">Province</label>
       <select id="province" name="province" required>
         <option value="NL" selected>Newfoundland and Labrador</option>
         <option value="NS">Nova Scotia</option>
@@ -37,13 +38,18 @@
     </div>
   </div>
   <div class="field">
-    <label for="email">Email</label>
+    <label for="email" class="req">Email</label>
     <input id="email" name="email" type="email" autocomplete="email" required maxlength="160">
     <p class="hint">We send one link to confirm it is you. Your signature counts once you click it.</p>
   </div>
+  <div class="field">
+    <label for="phone">Phone <span class="opt">(optional)</span></label>
+    <input id="phone" name="phone" type="tel" autocomplete="tel" maxlength="20" placeholder="optional">
+    <p class="hint">Only used if the organiser needs to reach you about this petition, for example to collect a paper signature.</p>
+  </div>
 
   <div class="field">
-    <label for="signature-pad">Draw your signature</label>
+    <label for="signature-pad" class="req">Draw your signature</label>
     <div class="pad-wrap">
       <canvas id="signature-pad" width="600" height="180" aria-label="Signature drawing area"></canvas>
     </div>
@@ -58,7 +64,7 @@
     <p><strong>By signing I confirm</strong> that I am signing for myself only and the information I give is accurate. I understand this petition will be delivered to the bodies named above; if it is tabled in the House of Assembly it becomes a public document of the House and my name and address will be available to the public. My information is used only for this petition and, if I tick the box, for occasional email updates I can stop at any time. It is never sold or used for any commercial purpose. <a href="{{ '/privacy/' | relative_url }}">Privacy</a>.</p>
     <label class="check"><input type="checkbox" id="consent_updates" name="consent_updates"> Email me updates about this petition.</label>
     <label class="check"><input type="checkbox" id="consent_statement" name="consent_statement"> I am willing to be contacted to give a written statement about my own experience.</label>
-    <label class="check"><input type="checkbox" id="agree" name="agree" required> I agree to the statement above.</label>
+    <label class="check req-check"><input type="checkbox" id="agree" name="agree" required> I agree to the statement above. <span class="req-mark">*</span></label>
   </div>
 
   <div class="hp" aria-hidden="true"><label>Leave this empty<input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>

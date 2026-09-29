@@ -59,6 +59,7 @@
       province: form.province.value,
       postal_code: form.postal_code.value.trim().toUpperCase() || null,
       email: email,
+      phone: form.phone.value.trim() || null,
       signature_data: pad.toDataURL('image/png'),
       consent_updates: form.consent_updates.checked,
       consent_statement: form.consent_statement.checked,

@@ -17,6 +17,7 @@ create table if not exists public.signatures (
   province text not null default 'NL' check (char_length(province) = 2),
   postal_code text,
   email text not null check (position('@' in email) > 1),
+  phone text,
   signature_data text not null check (signature_data like 'data:image/png;base64,%' and char_length(signature_data) < 200000),
   consent_updates boolean not null default false,
   consent_statement boolean not null default false,
@@ -27,6 +28,9 @@ create table if not exists public.signatures (
   user_agent text,
   created_at timestamptz not null default now()
 );
+
+-- For instances that ran an earlier version of this file:
+alter table public.signatures add column if not exists phone text;
 
 create unique index if not exists signatures_one_per_email on public.signatures (petition_slug, lower(email));
 create unique index if not exists signatures_one_per_person on public.signatures (petition_slug, lower(full_name), lower(street), lower(community));
@@ -61,11 +65,11 @@ create policy organiser_self on public.organisers for select to authenticated
 create or replace function public.add_signature(s jsonb)
 returns void language plpgsql security definer set search_path = public as $$
 begin
-  insert into public.signatures (petition_slug, full_name, street, community, province, postal_code, email,
+  insert into public.signatures (petition_slug, full_name, street, community, province, postal_code, email, phone,
     signature_data, consent_updates, consent_statement, in_local_area, user_agent)
   values (
     s->>'petition_slug', s->>'full_name', s->>'street', s->>'community', coalesce(s->>'province','NL'),
-    nullif(s->>'postal_code',''), lower(s->>'email'), s->>'signature_data',
+    nullif(s->>'postal_code',''), lower(s->>'email'), nullif(left(s->>'phone',20),''), s->>'signature_data',
     coalesce((s->>'consent_updates')::boolean,false), coalesce((s->>'consent_statement')::boolean,false),
     coalesce((s->>'in_local_area')::boolean,false), left(s->>'user_agent',200));
 end $$;
