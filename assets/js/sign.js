@@ -19,6 +19,22 @@
   }
   loadCounts();
 
+  // Public wall: initials and community only (the database never sends more)
+  async function loadSigners() {
+    const ul = document.getElementById('signer-list');
+    if (!ul) return;
+    if (!sb) { ul.innerHTML = '<li class="muted">Signing is not switched on yet.</li>'; return; }
+    const { data, error } = await sb.rpc('public_signers', { p_slug: slug, p_limit: 60 });
+    if (error || !data) { ul.innerHTML = '<li class="muted">Could not load the list.</li>'; return; }
+    if (!data.length) { ul.innerHTML = '<li class="muted">Be the first to sign.</li>'; return; }
+    ul.innerHTML = data.map(r => {
+      const where = [r.community, r.province && r.province !== 'NL' ? r.province : ''].filter(Boolean).join(', ');
+      const esc = s => String(s == null ? '' : s).replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+      return '<li class="signer"><span class="initials">' + esc(r.initials) + '</span><span class="redacted" aria-hidden="true">' + 'name withheld' + '</span><span class="where">' + esc(where) + '</span><span class="when">' + esc(r.signed_on) + '</span></li>';
+    }).join('');
+  }
+  loadSigners();
+
   // Signature pad
   const canvas = document.getElementById('signature-pad');
   let pad = null;
@@ -82,7 +98,7 @@
       say('Your signature is saved but the confirmation email could not be sent (' + otpErr.message + '). The organiser can confirm it by hand; email them if you do not hear back.', 'warn');
       return;
     }
-    form.reset(); if (pad) pad.clear();
+    form.reset(); if (pad) pad.clear(); loadSigners(); loadCounts();
     say('Thank you. Check your email for a link to confirm your signature. It counts once you click it.', 'ok');
   });
 })();

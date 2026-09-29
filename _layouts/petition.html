@@ -37,6 +37,12 @@ layout: default
     <p class="organiser">Organised by <strong>{{ page.organiser }}</strong>{% if page.organiser_contact and page.organiser_contact != "" %} · <a href="mailto:{{ page.organiser_contact }}">{{ page.organiser_contact }}</a>{% endif %}. Opened {{ page.opened | date: "%B %-d, %Y" }}. The organiser's contact details are on the paper petition and at the signing location.</p>
   </section>
 
+  <section class="signers" id="signers">
+    <h2>Who has signed</h2>
+    <p class="muted">Initials and community only. Names, addresses and signatures are never shown online.</p>
+    <ul class="signer-list" id="signer-list" aria-live="polite"><li class="muted">Loading…</li></ul>
+  </section>
+
   {% if page.status == 'open' %}
   <section class="sign" id="sign">
     <h2>Sign</h2>
