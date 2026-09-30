@@ -14,7 +14,8 @@ permalink: /admin/
 <div id="dash" hidden>
   <p>Signed in as <span id="who"></span>. <button class="btn btn-small" id="out" type="button">Sign out</button></p>
   <div class="field"><label for="pet">Petition</label><select id="pet"></select></div>
-  <p><button class="btn" id="refresh" type="button">Refresh</button> <button class="btn" id="csv" type="button">Download CSV (council list)</button> <button class="btn" id="csv-stmt" type="button">Download statement volunteers</button></p>
+  <p><button class="btn" id="refresh" type="button">Refresh</button> <button class="btn" id="csv" type="button">Download CSV (council list)</button> <button class="btn" id="csv-stmt" type="button">Download statement volunteers</button> <button class="btn" id="csv-sup" type="button" hidden>Download supporter list</button></p>
+  <p id="sup-stats" class="muted"></p>
   <p id="stats" class="muted"></p>
   <div style="overflow-x:auto"><table id="tbl"><thead><tr><th>Date</th><th>Name</th><th>Address</th><th>Community</th><th>Prov.</th><th>Phone</th><th>Confirmed</th><th>Local</th><th>Paper</th><th>Updates</th><th>Statement</th><th></th></tr></thead><tbody></tbody></table></div>
 </div>
@@ -69,7 +70,22 @@ permalink: /admin/
   $('login').hidden = true; $('dash').hidden = false; $('who').textContent = session.user.email;
   const { data: mine } = await sb.from('organisers').select('petition_slug');
   const slugs = (mine || []).map(m => m.petition_slug);
-  $('pet').innerHTML = slugs.map(s => '<option value="' + s + '">' + s + '</option>').join('') || '<option value="">(no petitions assigned to this email)</option>';
-  if (slugs.length) load();
+  const owner = slugs.includes('*');
+  const petSlugs = slugs.filter(s => s !== '*');
+  $('pet').innerHTML = petSlugs.map(s => '<option value="' + s + '">' + s + '</option>').join('') || '<option value="">(no petitions assigned to this email)</option>';
+  if (petSlugs.length) load();
+  if (owner) {
+    const { data: sup } = await sb.from('supporters').select('created_at,full_name,email,community,province,source,unsubscribe_token,unsubscribed_at').order('created_at', { ascending: false });
+    const live = (sup || []).filter(r => !r.unsubscribed_at);
+    $('sup-stats').textContent = 'Supporter pool: ' + live.length + ' people opted in to hear about future petitions' + ((sup || []).length - live.length ? ' (' + ((sup || []).length - live.length) + ' unsubscribed)' : '') + '.';
+    $('csv-sup').hidden = false;
+    $('csv-sup').onclick = () => {
+      const rows = live.map(r => Object.assign({}, r, { unsubscribe_link: location.origin + base + '/unsubscribe/?t=' + r.unsubscribe_token }));
+      const q = v => '"' + String(v == null ? '' : v).replace(/"/g, '""') + '"';
+      const cols = ['created_at','full_name','email','community','province','source','unsubscribe_link'];
+      const out = [cols.join(',')].concat(rows.map(r => cols.map(c => q(r[c])).join(','))).join('\n');
+      const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([out], { type: 'text/csv' })); a.download = 'supporters.csv'; a.click();
+    };
+  }
 })();
 </script>

@@ -1,0 +1,17 @@
+---
+title: Unsubscribe
+permalink: /unsubscribe/
+---
+<h1>Unsubscribe</h1>
+<p id="unsub-msg">Working…</p>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script>
+(async function () {
+  const msg = document.getElementById('unsub-msg');
+  const t = new URLSearchParams(location.search).get('t');
+  if (!t) { msg.textContent = 'This link is missing its code. Reply to any email from us with the word "unsubscribe" and we will remove you by hand.'; return; }
+  const sb = window.supabase.createClient(window.TA.supabaseUrl, window.TA.supabaseAnonKey);
+  const { data, error } = await sb.rpc('unsubscribe_supporter', { p_token: t });
+  msg.textContent = (error || !data) ? 'We could not find that subscription. Reply to any email from us with the word "unsubscribe" and we will remove you by hand.' : 'Done. You will not get emails about future petitions. You can rejoin from the home page at any time.';
+})();
+</script>

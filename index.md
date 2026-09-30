@@ -59,6 +59,20 @@ permalink: /
   <p class="muted area-note">Every community in Newfoundland and Labrador can have its own heading here. <a href="{{ '/start/' | relative_url }}">Start a petition</a> for yours.</p>
 </section>
 
+<section class="card loop" id="stay-informed">
+  <h2>Hear about the next petition</h2>
+  <p>Join the list and we will email you when a new petition opens in Newfoundland and Labrador, so the people who care are there from day one. Occasional emails only, never sold, unsubscribe with one click. <span class="muted" id="loop-count"></span></p>
+  <form id="loop-form" class="sign-form" novalidate>
+    <div class="row">
+      <div class="field"><label for="loop-name">Name</label><input id="loop-name" type="text" autocomplete="name" maxlength="120"></div>
+      <div class="field"><label for="loop-community">Community</label><input id="loop-community" type="text" autocomplete="address-level2" maxlength="80" placeholder="e.g. Conception Bay South"></div>
+      <div class="field"><label for="loop-email" class="req">Email</label><input id="loop-email" type="email" autocomplete="email" required maxlength="160"></div>
+    </div>
+    <button type="submit" class="btn btn-primary">Keep me informed</button>
+    <p class="form-msg" id="loop-msg" role="status" aria-live="polite"></p>
+  </form>
+</section>
+
 <section>
   <h2>How it works</h2>
   <ol>
@@ -72,7 +86,23 @@ permalink: /
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script src="{{ '/assets/js/share.js' | relative_url }}"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script>
+(function () {
+  const f = document.getElementById('loop-form'); if (!f) return;
+  const msg = document.getElementById('loop-msg');
+  const ok = window.TA && window.TA.supabaseUrl && !/YOUR-PROJECT/.test(window.TA.supabaseUrl) && window.supabase;
+  const sb = ok ? window.supabase.createClient(window.TA.supabaseUrl, window.TA.supabaseAnonKey) : null;
+  if (sb) sb.rpc('supporter_count').then(({ data }) => { const c = document.getElementById('loop-count'); if (c && data) c.textContent = Number(data).toLocaleString() + ' people are on the list.'; });
+  f.addEventListener('submit', async (e) => {
+    e.preventDefault(); if (!f.reportValidity()) return;
+    if (!sb) { msg.textContent = 'Not switched on yet.'; return; }
+    const { error } = await sb.rpc('join_supporters', { p_email: document.getElementById('loop-email').value.trim(), p_name: document.getElementById('loop-name').value.trim(), p_community: document.getElementById('loop-community').value.trim(), p_province: 'NL', p_source: 'home' });
+    msg.className = 'form-msg ' + (error ? 'err' : 'ok');
+    msg.textContent = error ? 'Could not add you: ' + error.message : 'You are on the list. Thank you.';
+    if (!error) f.reset();
+  });
+})();
 (function () {
   const sel = document.getElementById('area-select');
   if (!sel) return;

@@ -114,6 +114,9 @@
       say(msg, /duplicate|already/i.test(aErr.message) ? 'You have already signed this petition. Thank you.' : 'Something went wrong: ' + aErr.message, 'err');
       return;
     }
+    if (form.consent_future && form.consent_future.checked) {
+      sb.rpc('join_supporters', { p_email: email, p_name: pending.full_name, p_community: community, p_province: pending.province, p_source: slug }).then(() => {});
+    }
     const err = await sendLink(email);
     btn.disabled = false;
     if (err) { say(msg, 'Your details are saved but the email could not be sent: ' + err.message, 'err'); return; }

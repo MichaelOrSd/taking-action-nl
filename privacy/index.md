@@ -22,6 +22,10 @@ To deliver the petition to the bodies it names, to confirm each signature belong
 - The body the petition is delivered to. A petition tabled in the House of Assembly becomes a public document of the House, and the name and address of every signer is available to the public. A petition delivered to a town council is a town record.
 - Nobody else. We do not sell, rent or share your information, and we never use it for any commercial purpose.
 
+## The supporter list
+
+If you tick "Tell me when there is a new petition" or join from the home page, we keep your email, name and community on a separate list used only to tell you when a petition opens. Every such email has an unsubscribe link that works with one click. The list is never shared with petition organisers other than the platform owner, and never with anyone else.
+
 ## Updates and unsubscribing
 
 Update emails are sent only if you ticked the box. Every one has an unsubscribe line. You can also email the organiser.
