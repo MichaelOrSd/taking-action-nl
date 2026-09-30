@@ -11,6 +11,7 @@ layout: default
       {% if page.paper %}<span class="count-sep">·</span> <span class="count-num" id="count-paper">…</span> <span class="count-label">on paper</span>{% endif %}
     </div>
     {% if page.status == 'open' %}<a class="btn btn-primary" href="#sign">Sign this petition</a>{% endif %}
+    <div id="share"></div>
     {% assign share_url = page.url | absolute_url %}
     {% include share.html url=share_url title=page.title %}
   </header>

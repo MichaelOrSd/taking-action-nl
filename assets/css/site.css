@@ -75,6 +75,11 @@ label.req::after { content: " *"; color: var(--accent); font-weight: 700; } .req
 .share-url { margin: .5rem 0 0; font-size: .85rem; word-break: break-all; } .share-msg { margin: .3rem 0 0; font-size: .85rem; min-height: 1em; }
 .share-compact { margin: .8rem 0 0; padding: .6rem .7rem; } .share-compact .share-lead { font-size: .9rem; margin-bottom: .3rem; } .share-compact .share-url { display: none; }
 @media (max-width: 480px) { .share { grid-template-columns: 1fr; } .share-qr { width: max-content; } }
+.steps { display: flex; gap: .4rem; flex-wrap: wrap; margin: 0 0 .8rem; padding: 0; }
+.step { font-size: .8rem; font-weight: 600; color: var(--muted); border: 1px solid var(--line); border-radius: 999px; padding: .2rem .7rem; }
+.step.on { color: var(--accent-ink); background: var(--accent); border-color: var(--accent); } .step.done { color: var(--ok); border-color: var(--ok); }
+.sign-step { margin-top: 1rem; } .sign-step h3 { margin-top: .2rem; }
+.code-input { width: 100%; max-width: 12rem; font-size: 1.6rem; letter-spacing: .35em; text-align: center; padding: .5rem .6rem; border: 1px solid var(--line); border-radius: .45rem; background: var(--card); color: var(--ink); font-family: ui-monospace, Menlo, monospace; }
 .hero { padding: 1.5rem 0 .5rem; } .hero p { font-size: 1.1rem; }
 table { border-collapse: collapse; width: 100%; font-size: .95rem; } th, td { border: 1px solid var(--line); padding: .4rem .5rem; text-align: left; vertical-align: top; }
 @media print {

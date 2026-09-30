@@ -1,4 +1,5 @@
 <form id="sign-form" class="sign-form" novalidate>
+  <p class="steps"><span class="step on">1 Details and signature</span><span class="step">2 Email code</span><span class="step">3 Done</span></p>
   <p class="hint">Fields marked <span class="req-mark">*</span> are required.</p>
   <div class="field">
     <label for="full_name" class="req">Full name</label>
@@ -40,7 +41,7 @@
   <div class="field">
     <label for="email" class="req">Email</label>
     <input id="email" name="email" type="email" autocomplete="email" required maxlength="160">
-    <p class="hint">We send one link to confirm it is you. Your signature counts once you click it.</p>
+    <p class="hint">We email you a six-digit code and you enter it on this page. Your signature is recorded only after the code is verified.</p>
   </div>
   <div class="field">
     <label for="phone">Phone <span class="opt">(optional)</span></label>
@@ -69,6 +70,32 @@
 
   <div class="hp" aria-hidden="true"><label>Leave this empty<input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
 
-  <button type="submit" class="btn btn-primary" id="sign-submit">Sign the petition</button>
+  <button type="submit" class="btn btn-primary" id="sign-submit">Continue: send me the code</button>
   <p class="form-msg" id="form-msg" role="status" aria-live="polite"></p>
 </form>
+
+<div id="sign-step-code" class="sign-step card" hidden>
+  <p class="steps"><span class="step done">1 Details and signature</span><span class="step on">2 Email code</span><span class="step">3 Done</span></p>
+  <h3>Enter the code we emailed you</h3>
+  <p>A six-digit code was sent to <strong id="code-email"></strong>. It arrives within a minute; check Junk if it does not. Nothing is recorded until you enter it.</p>
+  <form id="code-form" novalidate>
+    <div class="field">
+      <label for="code-input">Six-digit code</label>
+      <input id="code-input" class="code-input" type="text" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]*" maxlength="6" placeholder="123456" required>
+    </div>
+    <button type="submit" class="btn btn-primary" id="code-submit">Verify and sign</button>
+    <button type="button" class="btn btn-small" id="code-resend">Send a new code</button>
+    <button type="button" class="btn btn-small" id="code-back">Change my details</button>
+    <p class="form-msg" id="code-msg" role="status" aria-live="polite"></p>
+  </form>
+</div>
+
+<div id="sign-step-done" class="sign-step card" hidden>
+  <p class="steps"><span class="step done">1 Details and signature</span><span class="step done">2 Email code</span><span class="step on">3 Done</span></p>
+  <h3>Thank you. Your signature is recorded and counted.</h3>
+  <p>You will see your initials and community in the list above. Two things that help now:</p>
+  <ol>
+    <li><a href="#share">Share this petition</a> with neighbours; the QR code and buttons are at the top of the page.</li>
+    <li>If this petition is going to the House of Assembly, it needs ink: <a href="{{ '/print/' | relative_url }}?p={{ page.slug }}">print your signing page</a> and sign it, if you are comfortable with your name and address being public.</li>
+  </ol>
+</div>

@@ -4,10 +4,12 @@ permalink: /admin/
 ---
 <h1>Organiser dashboard</h1>
 <div id="login" class="card">
-  <p>Organisers sign in with the email registered for their petitions. A one-time link is sent to that address.</p>
+  <p>Organisers sign in with the email registered for their petitions. A six-digit code is emailed to that address.</p>
   <form id="login-form" class="sign-form" onsubmit="return false">
     <div class="field"><label for="le">Email</label><input id="le" type="email" required></div>
-    <button class="btn btn-primary" id="lb" type="button">Send sign-in link</button>
+    <button class="btn btn-primary" id="lb" type="button">Email me a code</button>
+    <div class="field" id="lc-wrap" hidden><label for="lc">Six-digit code</label><input id="lc" class="code-input" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="6"></div>
+    <button class="btn btn-primary" id="lv" type="button" hidden>Sign in</button>
     <p class="form-msg" id="lm"></p>
   </form>
 </div>
@@ -27,8 +29,14 @@ permalink: /admin/
   const $ = id => document.getElementById(id);
   let rows = [];
   $('lb').onclick = async () => {
-    const { error } = await sb.auth.signInWithOtp({ email: $('le').value.trim(), options: { emailRedirectTo: location.origin + base + '/admin/' } });
-    $('lm').textContent = error ? error.message : 'Check your email for the sign-in link.';
+    const { error } = await sb.auth.signInWithOtp({ email: $('le').value.trim(), options: { shouldCreateUser: false } });
+    $('lm').textContent = error ? error.message : 'Enter the six-digit code from your email.';
+    if (!error) { $('lc-wrap').hidden = false; $('lv').hidden = false; $('lc').focus(); }
+  };
+  $('lv').onclick = async () => {
+    const { error } = await sb.auth.verifyOtp({ email: $('le').value.trim(), token: $('lc').value.replace(/\D/g, ''), type: 'email' });
+    if (error) { $('lm').textContent = 'That code did not work.'; return; }
+    location.reload();
   };
   async function load() {
     const slug = $('pet').value;
