@@ -1,0 +1,19 @@
+{%- comment -%} Usage: {% include share.html url=abs_url title=title compact=true %} {%- endcomment -%}
+<div class="share{% if include.compact %} share-compact{% endif %}" data-url="{{ include.url }}" data-title="{{ include.title | escape }}">
+  <div class="share-qr" aria-label="QR code linking to this petition"></div>
+  <div class="share-body">
+    <p class="share-lead">Share this petition</p>
+    <div class="share-btns">
+      <button type="button" class="btn btn-small share-native" hidden>Share…</button>
+      <button type="button" class="btn btn-small share-copy">Copy link</button>
+      <a class="btn btn-small share-email" href="#">Email</a>
+      <a class="btn btn-small share-sms" href="#">Text message</a>
+      <a class="btn btn-small share-wa" href="#" target="_blank" rel="noopener">WhatsApp</a>
+      <a class="btn btn-small share-fb" href="#" target="_blank" rel="noopener">Facebook</a>
+      <a class="btn btn-small share-x" href="#" target="_blank" rel="noopener">X</a>
+      <button type="button" class="btn btn-small share-qr-dl">Download QR</button>
+    </div>
+    <p class="share-url"><a href="{{ include.url }}">{{ include.url }}</a></p>
+    <p class="share-msg muted" aria-live="polite"></p>
+  </div>
+</div>

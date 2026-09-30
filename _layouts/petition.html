@@ -11,6 +11,7 @@ layout: default
       {% if page.paper %}<span class="count-sep">·</span> <span class="count-num" id="count-paper">…</span> <span class="count-label">on paper</span>{% endif %}
     </div>
     {% if page.status == 'open' %}<a class="btn btn-primary" href="#sign">Sign this petition</a>{% endif %}
+    {% include share.html url=page.url|absolute_url title=page.title %}
   </header>
 
   <section class="petition-body">
@@ -63,6 +64,8 @@ layout: default
   {% endif %}
   {% endif %}
 </article>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="{{ '/assets/js/share.js' | relative_url }}"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/signature_pad/4.1.7/signature_pad.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="{{ '/assets/js/sign.js' | relative_url }}"></script>

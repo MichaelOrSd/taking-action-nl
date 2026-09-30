@@ -35,6 +35,7 @@ permalink: /
       <span class="meta">{{ p.community }} · opened {{ p.opened | date: "%B %-d, %Y" }} · organised by {{ p.organiser }}</span>
       {{ p.summary }}
       <a class="go" href="{{ p.url | relative_url }}">Read and sign →</a>
+      {% include share.html url=p.url|absolute_url title=p.title compact=true %}
     </li>
   {% endfor %}
   </ul>
@@ -68,6 +69,8 @@ permalink: /
   <p class="note"><strong>A petition asks. It does not order.</strong> No petition in Canada is legally binding. What it does is put a number on how many people want something done, on the public record, in front of the people who can do it.</p>
 </section>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="{{ '/assets/js/share.js' | relative_url }}"></script>
 <script>
 (function () {
   const sel = document.getElementById('area-select');
