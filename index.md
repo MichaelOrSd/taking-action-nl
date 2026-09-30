@@ -35,7 +35,8 @@ permalink: /
       <span class="meta">{{ p.community }} · opened {{ p.opened | date: "%B %-d, %Y" }} · organised by {{ p.organiser }}</span>
       {{ p.summary }}
       <a class="go" href="{{ p.url | relative_url }}">Read and sign →</a>
-      {% include share.html url=p.url|absolute_url title=p.title compact=true %}
+      {% assign share_url = p.url | absolute_url %}
+      {% include share.html url=share_url title=p.title compact=true %}
     </li>
   {% endfor %}
   </ul>
