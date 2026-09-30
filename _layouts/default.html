@@ -9,6 +9,8 @@
   <meta property="og:description" content="{{ page.summary | default: site.description | strip_html | truncate: 200 }}">
   <meta property="og:type" content="website">
   <meta property="og:url" content="{{ page.url | absolute_url }}">
+  <meta property="og:image" content="{{ '/assets/og.png' | absolute_url }}">
+  <meta name="twitter:card" content="summary_large_image">
   <link rel="canonical" href="{{ page.url | absolute_url }}">
   <link rel="stylesheet" href="{{ '/assets/css/site.css' | relative_url }}">
   <script>window.TA = { baseurl: "{{ site.baseurl }}", province: "{{ site.platform.province }}", provinceCode: "{{ site.platform.province_code }}" };</script>
@@ -23,8 +25,7 @@
     </a>
     <nav class="site-nav" aria-label="Main">
       <a href="{{ '/#petitions' | relative_url }}">Petitions</a>
-      <a href="{{ '/start/' | relative_url }}">Start one</a>
-      <a href="{{ '/projects/' | relative_url }}">Projects</a>
+      <a href="{{ '/start/' | relative_url }}">Start a petition</a>
       <a href="{{ '/about/' | relative_url }}">About</a>
     </nav>
   </header>
@@ -34,16 +35,8 @@
   </main>
 
   <footer class="site-footer">
-    <p><strong>{{ site.title }}</strong>. {{ site.tagline }}.</p>
-    <p><strong>Privacy first.</strong> Only what a petition needs is collected. Only the count is public. Nothing is sold or shared. <a href="{{ '/privacy/' | relative_url }}">Privacy policy</a>.</p>
-    <p>A petition asks. It does not order. Petitions on this site are not legally binding on anyone; they show how many people want a thing done, and they put that on the record.</p>
-    <p>
-      <a href="{{ '/about/' | relative_url }}">About</a> ·
-      <a href="{{ '/privacy/' | relative_url }}">Privacy</a> ·
-      <a href="{{ '/start/' | relative_url }}">Start a petition</a> ·
-      <a href="https://github.com/MichaelOrSd/taking-action-nl">Source code</a>
-    </p>
-    <p class="muted">Run by {{ site.platform.owner }}{% if site.platform.contact != "" %} · {{ site.platform.contact }}{% endif %} · Not affiliated with any government, town or political party.</p>
+    <p><strong>{{ site.title }}</strong> · <a href="{{ '/about/' | relative_url }}">About</a> · <a href="{{ '/privacy/' | relative_url }}">Privacy</a> · <a href="{{ '/start/' | relative_url }}">Start a petition</a> · <a href="{{ '/projects/' | relative_url }}">Projects</a> · <a href="https://github.com/MichaelOrSd/taking-action-nl">Source</a></p>
+    <p>Run by {{ site.platform.owner }}. Not affiliated with any government, town or party.</p>
   </footer>
 </body>
 </html>

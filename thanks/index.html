@@ -1,56 +1,37 @@
 ---
-title: Thank you
+title: Confirming your signature
 permalink: /thanks/
 ---
-<h1>Thank you</h1>
+<h1>One moment</h1>
 <p id="thanks-msg">Confirming your signature…</p>
-<div id="thanks-next" hidden>
-  <p class="note"><strong>Your signature is confirmed and counted.</strong></p>
-  <h2>Two more things that help</h2>
-  <ol>
-    <li><a id="print-link" class="btn" href="#">Print your House of Assembly signing page</a> and sign it in ink. The House accepts paper only.</li>
-    <li>Share the petition: <a id="share-link" href="#"></a></li>
-  </ol>
-  <p><a id="back-link" href="#">Back to the petition</a></p>
-</div>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<p><a id="back-link" href="{{ '/' | relative_url }}">Back to the petition</a></p>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script>
 (async function () {
   const params = new URLSearchParams(location.search);
   const slug = params.get('p') || '';
   const base = (window.TA && window.TA.baseurl) || '';
   const msg = document.getElementById('thanks-msg');
-  document.getElementById('print-link').href = base + '/print/?p=' + encodeURIComponent(slug);
   const url = location.origin + base + '/p/' + slug + '/';
-  const share = document.getElementById('share-link'); share.href = url; share.textContent = url;
   document.getElementById('back-link').href = url;
   if (!window.TA || /YOUR-PROJECT/.test(window.TA.supabaseUrl)) { msg.textContent = 'Signing is not switched on yet.'; return; }
   const sb = window.supabase.createClient(window.TA.supabaseUrl, window.TA.supabaseAnonKey);
+  const expired = 'This link has already been used or has expired. If you already confirmed, you are done. Otherwise sign again to get a fresh link.';
   async function finish() {
-    const { data, error } = await sb.rpc('confirm_my_signature', { p_slug: slug });
-    if (error) { msg.textContent = 'Could not confirm: ' + error.message; return; }
-    msg.hidden = true; document.getElementById('thanks-next').hidden = false;
+    const { error } = await sb.rpc('confirm_my_signature', { p_slug: slug });
+    if (error) { msg.textContent = 'Could not confirm. Please try the link again in a moment.'; return false; }
     await sb.auth.signOut();
+    return true;
   }
-  // One click: the email links here with a token_hash and this page confirms it
-  // as soon as it loads. If a mail scanner has already used the code, the page
-  // says so and offers a fresh link, so nobody is left stuck.
   const tokenHash = params.get('token_hash');
   if (tokenHash) {
-    msg.textContent = 'Confirming your signature…';
     const { error } = await sb.auth.verifyOtp({ token_hash: tokenHash, type: params.get('type') || 'magiclink' });
-    if (error) {
-      msg.innerHTML = 'This link has already been used or has expired. <a href="' + url + '#sign">Sign again</a> to get a fresh one, or if you already confirmed, you are done.';
-      return;
-    }
-    await finish();
-    location.replace(url + '?signed=1#sign-step-done');
+    if (error) { msg.textContent = expired; return; }
+    if (await finish()) location.replace(url + '?signed=1#sign');
     return;
   }
-  // Older path: the session arrives in the URL hash.
   const { data: { session } } = await sb.auth.getSession();
-  if (!session) { msg.textContent = 'This link has expired or was already used. If your signature is not counted, sign again and click the new link.'; return; }
-  await finish();
-  location.replace(url + '?signed=1#sign-step-done');
+  if (!session) { msg.textContent = expired; return; }
+  if (await finish()) location.replace(url + '?signed=1#sign');
 })();
 </script>

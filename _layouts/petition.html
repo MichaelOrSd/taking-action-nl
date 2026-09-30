@@ -1,73 +1,80 @@
 ---
 layout: default
 ---
+{% assign share_url = page.url | absolute_url %}
 <article class="petition" data-slug="{{ page.slug }}" data-local-area="{{ page.local_area | join: '|' }}" data-status="{{ page.status }}">
   <header class="petition-head">
-    <p class="eyebrow">Petition · {{ page.community }}{% if page.status == 'open' %} · open{% else %} · {{ page.status }}{% endif %}</p>
+    <p class="eyebrow">Petition · {{ page.community }} · {{ page.status }}</p>
     <h1>{{ page.title }}</h1>
     <p class="lead">{{ page.summary }}</p>
     <div class="count" id="count" aria-live="polite">
-      <span class="count-num" id="count-digital">…</span> <span class="count-label">signed online</span>
-      {% if page.paper %}<span class="count-sep">·</span> <span class="count-num" id="count-paper">…</span> <span class="count-label">on paper</span>{% endif %}
+      <span class="count-num" id="count-digital">…</span>
+      <span class="count-label"><span id="count-label-text">signed</span><span id="count-paper-wrap" hidden> · <span id="count-paper">0</span> on paper</span></span>
     </div>
-    {% if page.status == 'open' %}<a class="btn btn-primary" href="#sign">Sign this petition</a>{% endif %}
-    <div id="share"></div>
-    {% assign share_url = page.url | absolute_url %}
-    {% include share.html url=share_url title=page.title %}
+    {% if page.status == 'open' %}
+    <div class="action-row">
+      <a class="btn btn-primary btn-wide" href="#sign">Sign this petition</a>
+      <button type="button" class="btn share-quick" data-url="{{ share_url }}" data-title="{{ page.title | escape }}">Share</button>
+    </div>
+    {% endif %}
   </header>
 
   <section class="petition-body">
-    <h2>Background</h2>
-    {{ page.background | markdownify }}
-
     <h2>What we ask</h2>
     {% for ask in page.asks %}
     <div class="ask">
-      <h3>To {{ ask.to }}</h3>
+      <h3>{{ ask.to }}</h3>
       {{ ask.text | markdownify }}
+      {% if ask.how %}<p class="meta">Delivered: {{ ask.how }}.</p>{% endif %}
     </div>
     {% endfor %}
 
-    <h2>Who receives this</h2>
-    <ul>
-    {% for ask in page.asks %}<li><strong>{{ ask.to }}</strong>{% if ask.how %}: {{ ask.how }}{% endif %}</li>{% endfor %}
-    </ul>
-
-    <p class="note"><strong>Plain truth about petitions.</strong> A petition asks. It does not order. This one puts a number on how many people want the problem fixed and puts that number on the public record with the people who can act.</p>
+    <h2>Background</h2>
+    {{ page.background | markdownify }}
 
     {{ content }}
 
-    <p class="organiser">Organised by <strong>{{ page.organiser }}</strong>{% if page.organiser_contact and page.organiser_contact != "" %} · <a href="mailto:{{ page.organiser_contact }}">{{ page.organiser_contact }}</a>{% endif %}. Opened {{ page.opened | date: "%B %-d, %Y" }}. The organiser's contact details are on the paper petition and at the signing location.</p>
+    <p class="note">A petition asks; it does not order. This one puts a number on the public record in front of the people who can act.</p>
+    <p class="meta">Organised by {{ page.organiser }}. Opened {{ page.opened | date: "%-d %b %Y" }}. Contact details are on the paper petition.</p>
+  </section>
+
+  <section class="share-section" id="share">
+    <h2>Share this petition</h2>
+    {% include share.html url=share_url title=page.title %}
   </section>
 
   <section class="signers" id="signers">
     <h2>Who has signed</h2>
-    <p class="muted">Initials and community only. Names, addresses and signatures are never shown online.</p>
-    <ul class="signer-list" id="signer-list" aria-live="polite"><li class="muted">Loading…</li></ul>
+    <p class="meta">Initials and community only.</p>
+    <ul class="signer-list" id="signer-list"><li class="meta">Loading…</li></ul>
+    <p class="meta" id="signer-more" hidden></p>
   </section>
 
   {% if page.status == 'open' %}
   <section class="sign" id="sign">
     <h2>Sign</h2>
-    <p>Residents of {{ site.platform.province }} are welcome to sign. If you live outside the province you may still sign; your signature is counted separately.</p>
+    <ol class="steps" id="steps" aria-label="Signing steps">
+      <li class="step on" aria-current="step">1 Your details</li>
+      <li class="step">2 Confirm by email</li>
+      <li class="step">3 Done</li>
+    </ol>
     {% include sign-form.html %}
   </section>
 
   {% if page.paper %}
-  <section class="paper">
+  <section class="paper" id="paper">
     <h2>Sign on paper too</h2>
-    <p>The House of Assembly accepts only paper petitions with original ink signatures, and a petition tabled in the House becomes a public document: the name and address of every signer on the paper pages is available to the public. That is the House's rule and we cannot change it. The online list is different: it goes to the Town and shows the public only initials and community. After you sign online you can print a page in the House's own format with your details filled in, sign it in ink, and drop it off or have a canvasser collect it, if you are comfortable with your name and address being public.</p>
-    <a class="btn" href="{{ '/print/' | relative_url }}?p={{ page.slug }}">Print a signing page</a>
+    <p>The House of Assembly accepts ink signatures only, and a petition tabled there is a public document: names and addresses on the paper pages are public. The online list is different; it goes to the Town and shows only initials. If you are comfortable with that, print your page, sign it, and drop it off or hand it to a canvasser.</p>
     {% if page.paper_locations %}
-    <h3>Where to sign in person</h3>
-    <ul>{% for loc in page.paper_locations %}<li>{{ loc }}</li>{% endfor %}</ul>
+    <p class="meta">Where to sign in person: {{ page.paper_locations | join: '; ' }}.</p>
     {% endif %}
+    <a class="btn" href="{{ '/print/' | relative_url }}?p={{ page.slug }}">Print my signing page</a>
   </section>
   {% endif %}
   {% endif %}
 </article>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-<script src="{{ '/assets/js/share.js' | relative_url }}"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/signature_pad/4.1.7/signature_pad.umd.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="{{ '/assets/js/sign.js' | relative_url }}"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/signature_pad/4.1.7/signature_pad.umd.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script defer src="{{ '/assets/js/share.js' | relative_url }}"></script>
+<script defer src="{{ '/assets/js/sign.js' | relative_url }}"></script>

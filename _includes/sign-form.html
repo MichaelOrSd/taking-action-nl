@@ -1,21 +1,19 @@
 <form id="sign-form" class="sign-form" novalidate>
-  <p class="steps"><span class="step on">1 Details and signature</span><span class="step">2 Confirm by email</span><span class="step">3 Done</span></p>
-  <p class="hint">Fields marked <span class="req-mark">*</span> are required.</p>
   <div class="field">
-    <label for="full_name" class="req">Full name</label>
-    <input id="full_name" name="full_name" type="text" autocomplete="name" required maxlength="120">
+    <label for="full_name">Full name</label>
+    <input id="full_name" name="full_name" type="text" autocomplete="name" autocapitalize="words" enterkeyhint="next" required maxlength="120">
   </div>
   <div class="field">
-    <label for="street" class="req">Street address</label>
-    <input id="street" name="street" type="text" autocomplete="street-address" required maxlength="160" placeholder="e.g. 12 Main Street">
+    <label for="street">Street address</label>
+    <input id="street" name="street" type="text" autocomplete="street-address" enterkeyhint="next" required maxlength="160" placeholder="e.g. 12 Main Street">
   </div>
   <div class="row">
     <div class="field">
-      <label for="community" class="req">Community</label>
-      <input id="community" name="community" type="text" autocomplete="address-level2" required maxlength="80" placeholder="e.g. Conception Bay South">
+      <label for="community">Community</label>
+      <input id="community" name="community" type="text" autocomplete="address-level2" autocapitalize="words" enterkeyhint="next" required maxlength="80" placeholder="e.g. Conception Bay South">
     </div>
     <div class="field">
-      <label for="province" class="req">Province</label>
+      <label for="province">Province</label>
       <select id="province" name="province" required>
         <option value="NL" selected>Newfoundland and Labrador</option>
         <option value="NS">Nova Scotia</option>
@@ -33,66 +31,64 @@
         <option value="XX">Outside Canada</option>
       </select>
     </div>
-    <div class="field">
-      <label for="postal_code">Postal code</label>
-      <input id="postal_code" name="postal_code" type="text" autocomplete="postal-code" maxlength="10" placeholder="optional">
-    </div>
   </div>
   <div class="field">
-    <label for="email" class="req">Email</label>
-    <input id="email" name="email" type="email" autocomplete="email" required maxlength="160">
-    <p class="hint">We email you one link to confirm it is you. Your signature counts once you click it, and this page will show you when it has.</p>
-  </div>
-  <div class="field">
-    <label for="phone">Phone <span class="opt">(optional)</span></label>
-    <input id="phone" name="phone" type="tel" autocomplete="tel" maxlength="20" placeholder="optional">
-    <p class="hint">Only used if the organiser needs to reach you about this petition, for example to collect a paper signature.</p>
+    <label for="email">Email</label>
+    <input id="email" name="email" type="email" inputmode="email" autocomplete="email" enterkeyhint="done" required maxlength="160">
+    <p class="hint">One click in your email confirms it is you.</p>
   </div>
 
   <div class="field">
-    <label for="signature-pad" class="req">Draw your signature</label>
+    <label for="signature-pad">Draw your signature</label>
     <div class="pad-wrap">
-      <canvas id="signature-pad" width="600" height="180" aria-label="Signature drawing area"></canvas>
+      <canvas id="signature-pad" width="600" height="160" aria-label="Signature drawing area"></canvas>
     </div>
     <div class="pad-actions">
-      <button type="button" class="btn btn-small" id="pad-clear">Clear</button>
-      <span class="hint">Use your finger or mouse.</span>
+      <button type="button" class="btn" id="pad-clear">Clear</button>
+      <span class="hint">Finger or mouse. It does not have to be neat.</span>
     </div>
   </div>
 
   <div class="consent">
-    <p class="muted"><strong>Privacy first:</strong> only your name and address go on the petition; your email is used once to confirm and, only if you tick the box, for updates. Your drawn signature is stored for the organiser and is never shown online.</p>
-    <p><strong>By signing I confirm</strong> that I am signing for myself only and the information I give is accurate. I understand this petition will be delivered to the bodies named above; if it is tabled in the House of Assembly it becomes a public document of the House and my name and address will be available to the public. My information is used only for this petition and, if I tick the box, for occasional email updates I can stop at any time. It is never sold or used for any commercial purpose. <a href="{{ '/privacy/' | relative_url }}">Privacy</a>.</p>
-    <label class="check"><input type="checkbox" id="consent_updates" name="consent_updates"> Email me updates about this petition.</label>
-    <label class="check"><input type="checkbox" id="consent_future" name="consent_future"> Tell me when there is a new petition in Newfoundland and Labrador I might want to sign. (Occasional emails, unsubscribe any time.)</label>
-    <label class="check"><input type="checkbox" id="consent_statement" name="consent_statement"> I am willing to be contacted to give a written statement about my own experience.</label>
-    <label class="check req-check"><input type="checkbox" id="agree" name="agree" required> I agree to the statement above. <span class="req-mark">*</span></label>
+    <label class="check"><input type="checkbox" id="consent_updates" name="consent_updates"> Email me about this petition and new petitions in Newfoundland and Labrador. Occasional, unsubscribe any time.</label>
+    {% if page.ask_statement %}
+    <label class="check"><input type="checkbox" id="consent_statement" name="consent_statement"> I am willing to give a written statement about my own experience.</label>
+    {% endif %}
+    <p class="consent-text">Your name and address go on the petition. Your email is used once to confirm you, and for updates only if you tick the box. Your drawn signature goes to the organiser and is never shown online.</p>
+    <p class="consent-text">By pressing Sign you confirm you are signing for yourself and your details are accurate. If this petition is tabled in the House of Assembly it becomes a public document and your name and address will be public. <a href="{{ '/privacy/' | relative_url }}">Privacy</a>.</p>
   </div>
 
   <div class="hp" aria-hidden="true"><label>Leave this empty<input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
 
-  <button type="submit" class="btn btn-primary" id="sign-submit">Sign the petition</button>
+  <button type="submit" class="btn btn-primary btn-wide" id="sign-submit">Sign the petition</button>
   <p class="form-msg" id="form-msg" role="status" aria-live="polite"></p>
 </form>
 
 <div id="sign-step-wait" class="sign-step card" hidden>
-  <p class="steps"><span class="step done">1 Details and signature</span><span class="step on">2 Confirm by email</span><span class="step">3 Done</span></p>
-  <h3>Check your email and click the link</h3>
-  <p>We sent a confirmation email to <strong id="wait-email"></strong>. Open it and press <strong>Confirm my signature</strong>. This page will notice and finish by itself; you can also just close this page and click the link whenever you find it.</p>
-  <p class="muted">Not there within a minute? Check Junk, or press "Send it again".</p>
-  <p>
-    <button type="button" class="btn btn-small" id="wait-resend">Send it again</button>
-    <button type="button" class="btn btn-small" id="wait-back">Change my details</button>
+  <h3>Check your email</h3>
+  <p>We emailed <strong id="wait-email"></strong>. Press <strong>Confirm my signature</strong> in that email. This page will finish on its own, or you can close it and click the link later.</p>
+  <p class="hint">Not there in a minute? Check Junk.</p>
+  <p class="btn-row">
+    <button type="button" class="btn" id="wait-resend">Send it again</button>
+    <button type="button" class="btn" id="wait-back">Change my details</button>
   </p>
   <p class="form-msg" id="wait-msg" role="status" aria-live="polite"></p>
   <p class="waiting" aria-hidden="true"><span class="dot"></span><span class="dot"></span><span class="dot"></span> waiting for your click</p>
 </div>
 
-<div id="sign-step-done" class="sign-step card" hidden>
-  <p class="steps"><span class="step done">1 Details and signature</span><span class="step done">2 Confirm by email</span><span class="step on">3 Done</span></p>
-  <h3>Thank you. Your signature is recorded and counted.</h3>
-  <p>Your initials and community now appear in the list above. The single most useful thing you can do next takes ten seconds: <strong>share this petition with one neighbour.</strong></p>
-  {% assign share_url = page.url | absolute_url %}
-  {% include share.html url=share_url title=page.title %}
-  <p class="muted">If this petition is going to the House of Assembly, it also needs ink: <a href="{{ '/print/' | relative_url }}?p={{ page.slug }}">print your signing page</a> and sign it, if you are comfortable with your name and address being public.</p>
+<div id="sign-step-done" class="sign-step" hidden>
+  <div class="card">
+    <h3 id="done-heading">Thank you. Your signature is counted.</h3>
+    <p>Now share it with one neighbour. Ten seconds.</p>
+    {% assign share_url = page.url | absolute_url %}
+    {% include share.html url=share_url title=page.title primary=true %}
+    <p class="hint" id="done-other" hidden>Opened the email on another device? The page you started on has finished too.</p>
+  </div>
+  {% if page.paper %}
+  <div class="card">
+    <h3>Going to the House of Assembly? It needs ink.</h3>
+    <p>The House accepts original signatures only, and a tabled petition is public. Print your page, sign it, and drop it at the signing location.</p>
+    <a class="btn" href="{{ '/print/' | relative_url }}?p={{ page.slug }}">Print my signing page</a>
+  </div>
+  {% endif %}
 </div>
