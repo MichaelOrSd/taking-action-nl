@@ -54,17 +54,32 @@
     $('pad-clear').addEventListener('click', () => pad.clear());
   }
 
-  const form = $('sign-form'), stepCode = $('sign-step-code'), stepDone = $('sign-step-done');
-  const msg = $('form-msg'), codeMsg = $('code-msg');
-  if (!form || !stepCode) return;
+  const form = $('sign-form'), stepWait = $('sign-step-wait'), stepDone = $('sign-step-done');
+  const msg = $('form-msg'), waitMsg = $('wait-msg');
+  if (!form || !stepWait) return;
   function say(el, text, kind) { el.textContent = text; el.className = 'form-msg ' + (kind || ''); }
-  let pending = null;
-  let lastSent = 0;
+  let pending = null, clientToken = null, lastSent = 0, pollTimer = null, pollStart = 0;
+  const redirect = location.origin + (window.TA.baseurl || '') + '/thanks/?p=' + encodeURIComponent(slug);
 
-  async function sendCode(email) {
-    const { error } = await sb.auth.signInWithOtp({ email, options: { shouldCreateUser: true } });
+  async function sendLink(email) {
+    const { error } = await sb.auth.signInWithOtp({ email, options: { emailRedirectTo: redirect, shouldCreateUser: true } });
     if (!error) lastSent = Date.now();
     return error;
+  }
+  function finish() {
+    clearInterval(pollTimer); pollTimer = null;
+    stepWait.hidden = true; stepDone.hidden = false;
+    stepDone.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    form.reset(); if (pad) pad.clear();
+    loadCounts(); loadSigners();
+  }
+  function startPolling() {
+    pollStart = Date.now();
+    pollTimer = setInterval(async () => {
+      if (Date.now() - pollStart > 30 * 60 * 1000) { clearInterval(pollTimer); say(waitMsg, 'Still waiting. This page has stopped checking; open the link in the email whenever you find it and it will confirm on its own.', 'warn'); return; }
+      const { data } = await sb.rpc('signature_confirmed', { p_token: clientToken });
+      if (data === true) finish();
+    }, 3000);
   }
 
   form.addEventListener('submit', async (e) => {
@@ -75,6 +90,7 @@
     if (!sb) { say(msg, 'Signing is not switched on yet. The organiser has not connected the database.', 'err'); return; }
     const email = form.email.value.trim().toLowerCase();
     const community = form.community.value.trim();
+    clientToken = (crypto.randomUUID ? crypto.randomUUID() : ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c => (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)));
     pending = {
       petition_slug: slug,
       full_name: form.full_name.value.trim(),
@@ -88,50 +104,38 @@
       consent_updates: form.consent_updates.checked,
       consent_statement: form.consent_statement.checked,
       in_local_area: localArea.includes(community.toLowerCase()),
-      user_agent: navigator.userAgent.slice(0, 200)
+      user_agent: navigator.userAgent.slice(0, 200),
+      client_token: clientToken
     };
-    const btn = $('sign-submit'); btn.disabled = true; say(msg, 'Sending your code…');
-    const err = await sendCode(email);
-    btn.disabled = false;
-    if (err) { say(msg, 'Could not send the code: ' + err.message, 'err'); return; }
-    say(msg, '');
-    $('code-email').textContent = email;
-    form.hidden = true; stepCode.hidden = false;
-    $('code-input').value = ''; $('code-input').focus();
-    stepCode.scrollIntoView({ behavior: 'smooth', block: 'center' });
-  });
-
-  $('code-form').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const code = $('code-input').value.replace(/\D/g, '');
-    if (code.length < 6) { say(codeMsg, 'Enter the six-digit code from the email.', 'err'); return; }
-    const b = $('code-submit'); b.disabled = true; say(codeMsg, 'Checking…');
-    const { error: vErr } = await sb.auth.verifyOtp({ email: pending.email, token: code, type: 'email' });
-    if (vErr) { b.disabled = false; say(codeMsg, 'That code did not work. Check the digits, or press "Send a new code".', 'err'); return; }
+    const btn = $('sign-submit'); btn.disabled = true; say(msg, 'Saving and sending your confirmation email…');
     const { error: aErr } = await sb.rpc('add_signature', { s: pending });
-    await sb.auth.signOut();
-    b.disabled = false;
     if (aErr) {
-      say(codeMsg, /duplicate|already/i.test(aErr.message) ? 'You have already signed this petition. Thank you.' : 'Could not record your signature: ' + aErr.message, 'err');
+      btn.disabled = false;
+      say(msg, /duplicate|already/i.test(aErr.message) ? 'You have already signed this petition. Thank you.' : 'Something went wrong: ' + aErr.message, 'err');
       return;
     }
-    stepCode.hidden = true; stepDone.hidden = false;
-    stepDone.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    form.reset(); if (pad) pad.clear();
-    loadCounts(); loadSigners();
+    const err = await sendLink(email);
+    btn.disabled = false;
+    if (err) { say(msg, 'Your details are saved but the email could not be sent: ' + err.message, 'err'); return; }
+    say(msg, '');
+    $('wait-email').textContent = email;
+    form.hidden = true; stepWait.hidden = false;
+    stepWait.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    startPolling();
   });
 
-  $('code-resend').addEventListener('click', async () => {
+  $('wait-resend').addEventListener('click', async () => {
     if (!pending) return;
     const wait = 60000 - (Date.now() - lastSent);
-    if (wait > 0) { say(codeMsg, 'Please wait ' + Math.ceil(wait / 1000) + ' seconds before asking for another code.', 'warn'); return; }
-    say(codeMsg, 'Sending a new code…');
-    const err = await sendCode(pending.email);
-    say(codeMsg, err ? 'Could not send: ' + err.message : 'A new code is on its way to ' + pending.email + '.', err ? 'err' : 'ok');
+    if (wait > 0) { say(waitMsg, 'Please wait ' + Math.ceil(wait / 1000) + ' seconds before asking for another email.', 'warn'); return; }
+    say(waitMsg, 'Sending another email…');
+    const err = await sendLink(pending.email);
+    say(waitMsg, err ? 'Could not send: ' + err.message : 'Another email is on its way to ' + pending.email + '.', err ? 'err' : 'ok');
   });
 
-  $('code-back').addEventListener('click', () => {
-    stepCode.hidden = true; form.hidden = false; say(codeMsg, '');
+  $('wait-back').addEventListener('click', () => {
+    clearInterval(pollTimer); pollTimer = null;
+    stepWait.hidden = true; form.hidden = false; say(waitMsg, '');
     form.email.focus();
   });
 })();

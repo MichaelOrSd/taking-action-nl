@@ -4,12 +4,10 @@ permalink: /admin/
 ---
 <h1>Organiser dashboard</h1>
 <div id="login" class="card">
-  <p>Organisers sign in with the email registered for their petitions. A six-digit code is emailed to that address.</p>
+  <p>Organisers sign in with the email registered for their petitions. A one-time sign-in link is emailed to that address.</p>
   <form id="login-form" class="sign-form" onsubmit="return false">
     <div class="field"><label for="le">Email</label><input id="le" type="email" required></div>
-    <button class="btn btn-primary" id="lb" type="button">Email me a code</button>
-    <div class="field" id="lc-wrap" hidden><label for="lc">Six-digit code</label><input id="lc" class="code-input" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="6"></div>
-    <button class="btn btn-primary" id="lv" type="button" hidden>Sign in</button>
+    <button class="btn btn-primary" id="lb" type="button">Email me a sign-in link</button>
     <p class="form-msg" id="lm"></p>
   </form>
 </div>
@@ -29,15 +27,16 @@ permalink: /admin/
   const $ = id => document.getElementById(id);
   let rows = [];
   $('lb').onclick = async () => {
-    const { error } = await sb.auth.signInWithOtp({ email: $('le').value.trim(), options: { shouldCreateUser: false } });
-    $('lm').textContent = error ? error.message : 'Enter the six-digit code from your email.';
-    if (!error) { $('lc-wrap').hidden = false; $('lv').hidden = false; $('lc').focus(); }
+    const { error } = await sb.auth.signInWithOtp({ email: $('le').value.trim(), options: { emailRedirectTo: location.origin + base + '/admin/?login=1', shouldCreateUser: false } });
+    $('lm').textContent = error ? error.message : 'Check your email and click the sign-in link.';
   };
-  $('lv').onclick = async () => {
-    const { error } = await sb.auth.verifyOtp({ email: $('le').value.trim(), token: $('lc').value.replace(/\D/g, ''), type: 'email' });
-    if (error) { $('lm').textContent = 'That code did not work.'; return; }
-    location.reload();
-  };
+  // Arriving from the email link: verify the token, then reload signed in.
+  const lp = new URLSearchParams(location.search);
+  if (lp.get('token_hash')) {
+    const { error } = await sb.auth.verifyOtp({ token_hash: lp.get('token_hash'), type: lp.get('type') || 'magiclink' });
+    history.replaceState(null, '', location.pathname);
+    if (error) { $('lm').textContent = 'That link has expired or was already used. Ask for a new one.'; } else { location.reload(); return; }
+  }
   async function load() {
     const slug = $('pet').value;
     const { data, error } = await sb.from('signatures').select('id,created_at,full_name,street,community,province,postal_code,email,phone,confirmed,in_local_area,paper_signed,consent_updates,consent_statement').eq('petition_slug', slug).order('created_at', { ascending: false });
