@@ -55,9 +55,11 @@ label.req::after { content: " *"; color: var(--accent); font-weight: 700; } .req
 .petition-list li .go { display: block; margin-top: .6rem; font-weight: 600; }
 #petitions { margin-top: 2rem; padding: 1.25rem; border: 1px solid var(--line); border-radius: .8rem; background: color-mix(in srgb, var(--card) 60%, var(--bg)); }
 #petitions h2:first-child { margin-top: 0; }
-.area-title { display: flex; align-items: baseline; gap: .6rem; margin: 1.4rem 0 .6rem; padding-bottom: .3rem; border-bottom: 2px solid var(--accent); font-size: 1.15rem; }
-.area-count { font-size: .8rem; font-weight: 600; color: var(--muted); }
-.area-nav { color: var(--muted); font-size: .95rem; margin: 0 0 .5rem; } .area-nav a { color: var(--accent); }
+.area { margin-top: 1.2rem; }
+.area-title { display: flex; align-items: baseline; gap: .8rem; margin: 0 0 .7rem; padding-bottom: .35rem; border-bottom: 3px solid var(--accent); font-size: 1.6rem; font-weight: 800; letter-spacing: -.01em; }
+.area-count { font-size: .8rem; font-weight: 600; color: var(--muted); letter-spacing: 0; }
+.area-pick { display: flex; align-items: center; gap: .6rem; flex-wrap: wrap; margin: .2rem 0 .4rem; }
+.area-pick label { font-weight: 600; } .area-pick select { padding: .5rem .7rem; border: 1px solid var(--line); border-radius: .45rem; background: var(--card); color: var(--ink); font: inherit; min-width: 14rem; }
 .area-note { margin-top: 1rem; font-size: .9rem; }
 .signers { margin-top: 2rem; }
 .signer-list { list-style: none; padding: 0; margin: .5rem 0 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr)); gap: .5rem; }

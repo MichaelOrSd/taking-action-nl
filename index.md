@@ -17,13 +17,16 @@ permalink: /
   <h2>Petitions by community</h2>
   {% assign open = site.petitions | where: "status", "open" | sort: "community" %}
   {% assign groups = open | group_by: "community" | sort: "name" %}
-  {% if groups.size > 1 %}
-  <p class="area-nav">Jump to:
-    {% for g in groups %}<a href="#area-{{ g.name | slugify }}">{{ g.name }}</a>{% unless forloop.last %} · {% endunless %}{% endfor %}
-  </p>
-  {% endif %}
+  <div class="area-pick">
+    <label for="area-select">Show petitions for</label>
+    <select id="area-select">
+      <option value="">All communities</option>
+      {% for g in groups %}<option value="{{ g.name | slugify }}">{{ g.name }}</option>{% endfor %}
+    </select>
+  </div>
   {% for g in groups %}
-  <h3 class="area-title" id="area-{{ g.name | slugify }}">{{ g.name }} <span class="area-count">{{ g.items.size }} open</span></h3>
+  <div class="area" id="area-{{ g.name | slugify }}" data-area="{{ g.name | slugify }}">
+  <h3 class="area-title">{{ g.name }}<span class="area-count">{{ g.items.size }} open</span></h3>
   <ul class="petition-list">
   {% assign items = g.items | sort: "opened" | reverse %}
   {% for p in items %}
@@ -35,8 +38,10 @@ permalink: /
     </li>
   {% endfor %}
   </ul>
+  </div>
   {% endfor %}
   {% if open.size == 0 %}<p class="muted">No open petitions yet.</p>{% endif %}
+  <p class="muted area-empty" id="area-empty" hidden>No open petitions for that community yet. <a href="{{ '/start/' | relative_url }}">Start one</a>.</p>
 
   {% assign closed = site.petitions | where_exp: "p", "p.status != 'open'" | sort: "community" %}
   {% if closed.size > 0 %}
@@ -62,3 +67,22 @@ permalink: /
   </ol>
   <p class="note"><strong>A petition asks. It does not order.</strong> No petition in Canada is legally binding. What it does is put a number on how many people want something done, on the public record, in front of the people who can do it.</p>
 </section>
+
+<script>
+(function () {
+  const sel = document.getElementById('area-select');
+  if (!sel) return;
+  const areas = Array.from(document.querySelectorAll('#petitions .area'));
+  const empty = document.getElementById('area-empty');
+  function apply(v) {
+    let shown = 0;
+    areas.forEach(a => { const on = !v || a.dataset.area === v; a.hidden = !on; if (on) shown++; });
+    if (empty) empty.hidden = !(v && shown === 0);
+  }
+  let saved = '';
+  try { saved = localStorage.getItem('ta-area') || ''; } catch (e) {}
+  if (saved && !Array.from(sel.options).some(o => o.value === saved)) saved = '';
+  sel.value = saved; apply(saved);
+  sel.addEventListener('change', () => { try { localStorage.setItem('ta-area', sel.value); } catch (e) {} apply(sel.value); });
+})();
+</script>
