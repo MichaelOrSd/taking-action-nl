@@ -2,7 +2,7 @@
 
 A free, open petition platform for residents of Newfoundland and Labrador. Static site on GitHub Pages (Jekyll), signatures in Supabase. Fork it and run your own for your community.
 
-Live: https://michaelorsd.github.io/taking-action-nl/
+Live: https://takingactionnl.ca/
 
 ## How it works
 
