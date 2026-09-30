@@ -14,10 +14,19 @@ permalink: /
 </section>
 
 <section id="petitions">
-  <h2>Open petitions</h2>
+  <h2>Petitions by community</h2>
+  {% assign open = site.petitions | where: "status", "open" | sort: "community" %}
+  {% assign groups = open | group_by: "community" | sort: "name" %}
+  {% if groups.size > 1 %}
+  <p class="area-nav">Jump to:
+    {% for g in groups %}<a href="#area-{{ g.name | slugify }}">{{ g.name }}</a>{% unless forloop.last %} · {% endunless %}{% endfor %}
+  </p>
+  {% endif %}
+  {% for g in groups %}
+  <h3 class="area-title" id="area-{{ g.name | slugify }}">{{ g.name }} <span class="area-count">{{ g.items.size }} open</span></h3>
   <ul class="petition-list">
-  {% assign open = site.petitions | where: "status", "open" | sort: "opened" | reverse %}
-  {% for p in open %}
+  {% assign items = g.items | sort: "opened" | reverse %}
+  {% for p in items %}
     <li>
       <a class="title" href="{{ p.url | relative_url }}">{{ p.title }}</a>
       <span class="meta">{{ p.community }} · opened {{ p.opened | date: "%B %-d, %Y" }} · organised by {{ p.organiser }}</span>
@@ -25,16 +34,22 @@ permalink: /
       <a class="go" href="{{ p.url | relative_url }}">Read and sign →</a>
     </li>
   {% endfor %}
-  {% if open.size == 0 %}<li class="muted">No open petitions yet.</li>{% endif %}
   </ul>
+  {% endfor %}
+  {% if open.size == 0 %}<p class="muted">No open petitions yet.</p>{% endif %}
 
-  {% assign closed = site.petitions | where_exp: "p", "p.status != 'open'" %}
+  {% assign closed = site.petitions | where_exp: "p", "p.status != 'open'" | sort: "community" %}
   {% if closed.size > 0 %}
   <h2>Delivered and closed</h2>
+  {% assign cgroups = closed | group_by: "community" | sort: "name" %}
+  {% for g in cgroups %}
+  <h3 class="area-title">{{ g.name }}</h3>
   <ul class="petition-list">
-  {% for p in closed %}<li><a class="title" href="{{ p.url | relative_url }}">{{ p.title }}</a><span class="meta">{{ p.community }} · {{ p.status }}</span></li>{% endfor %}
+  {% for p in g.items %}<li><a class="title" href="{{ p.url | relative_url }}">{{ p.title }}</a><span class="meta">{{ p.community }} · {{ p.status }}</span></li>{% endfor %}
   </ul>
+  {% endfor %}
   {% endif %}
+  <p class="muted area-note">Every community in Newfoundland and Labrador can have its own heading here. <a href="{{ '/start/' | relative_url }}">Start a petition</a> for yours.</p>
 </section>
 
 <section>

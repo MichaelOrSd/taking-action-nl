@@ -55,6 +55,10 @@ label.req::after { content: " *"; color: var(--accent); font-weight: 700; } .req
 .petition-list li .go { display: block; margin-top: .6rem; font-weight: 600; }
 #petitions { margin-top: 2rem; padding: 1.25rem; border: 1px solid var(--line); border-radius: .8rem; background: color-mix(in srgb, var(--card) 60%, var(--bg)); }
 #petitions h2:first-child { margin-top: 0; }
+.area-title { display: flex; align-items: baseline; gap: .6rem; margin: 1.4rem 0 .6rem; padding-bottom: .3rem; border-bottom: 2px solid var(--accent); font-size: 1.15rem; }
+.area-count { font-size: .8rem; font-weight: 600; color: var(--muted); }
+.area-nav { color: var(--muted); font-size: .95rem; margin: 0 0 .5rem; } .area-nav a { color: var(--accent); }
+.area-note { margin-top: 1rem; font-size: .9rem; }
 .signers { margin-top: 2rem; }
 .signer-list { list-style: none; padding: 0; margin: .5rem 0 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr)); gap: .5rem; }
 .signer { display: grid; grid-template-columns: auto 1fr; grid-template-rows: auto auto; column-gap: .6rem; align-items: center; background: var(--card); border: 1px solid var(--line); border-radius: .5rem; padding: .5rem .7rem; }
