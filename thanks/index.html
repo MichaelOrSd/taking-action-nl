@@ -44,11 +44,13 @@ permalink: /thanks/
       return;
     }
     await finish();
+    location.replace(url + '?signed=1#sign-step-done');
     return;
   }
   // Older path: the session arrives in the URL hash.
   const { data: { session } } = await sb.auth.getSession();
   if (!session) { msg.textContent = 'This link has expired or was already used. If your signature is not counted, sign again and click the new link.'; return; }
   await finish();
+  location.replace(url + '?signed=1#sign-step-done');
 })();
 </script>

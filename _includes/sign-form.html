@@ -91,9 +91,8 @@
 <div id="sign-step-done" class="sign-step card" hidden>
   <p class="steps"><span class="step done">1 Details and signature</span><span class="step done">2 Confirm by email</span><span class="step on">3 Done</span></p>
   <h3>Thank you. Your signature is recorded and counted.</h3>
-  <p>You will see your initials and community in the list above. Two things that help now:</p>
-  <ol>
-    <li><a href="#share">Share this petition</a> with neighbours; the QR code and buttons are at the top of the page.</li>
-    <li>If this petition is going to the House of Assembly, it needs ink: <a href="{{ '/print/' | relative_url }}?p={{ page.slug }}">print your signing page</a> and sign it, if you are comfortable with your name and address being public.</li>
-  </ol>
+  <p>Your initials and community now appear in the list above. The single most useful thing you can do next takes ten seconds: <strong>share this petition with one neighbour.</strong></p>
+  {% assign share_url = page.url | absolute_url %}
+  {% include share.html url=share_url title=page.title %}
+  <p class="muted">If this petition is going to the House of Assembly, it also needs ink: <a href="{{ '/print/' | relative_url }}?p={{ page.slug }}">print your signing page</a> and sign it, if you are comfortable with your name and address being public.</p>
 </div>

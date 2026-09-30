@@ -59,6 +59,11 @@
   if (!form || !stepWait) return;
   function say(el, text, kind) { el.textContent = text; el.className = 'form-msg ' + (kind || ''); }
   let pending = null, clientToken = null, lastSent = 0, pollTimer = null, pollStart = 0;
+  if (new URLSearchParams(location.search).get('signed') === '1') {
+    form.hidden = true; stepDone.hidden = false;
+    history.replaceState(null, '', location.pathname + '#sign-step-done');
+    setTimeout(() => stepDone.scrollIntoView({ behavior: 'smooth', block: 'center' }), 150);
+  }
   const redirect = location.origin + (window.TA.baseurl || '') + '/thanks/?p=' + encodeURIComponent(slug);
 
   async function sendLink(email) {
