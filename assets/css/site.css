@@ -6,7 +6,7 @@
 }
 @media (prefers-color-scheme: dark) {
   :root { --ink: #eceff2; --muted: #a2abb5; --line: #4a535d; --bg: #15181c; --card: #20252b; --accent: #e0604f; }
-  :root a { color: #e8735f; }
+  :root a:not(.btn):not(.brand):not(.title) { color: #e8735f; }
 }
 * { box-sizing: border-box; }
 html { color-scheme: light dark; }
@@ -38,7 +38,7 @@ p { margin: 0 0 .75rem; }
 
 /* Buttons */
 .btn { display: inline-flex; align-items: center; justify-content: center; gap: .45rem; min-height: 2.75rem; padding: .6rem 1.1rem; border-radius: .5rem; border: 1px solid var(--line); background: var(--card); color: var(--ink); text-decoration: none; font: inherit; font-weight: 600; cursor: pointer; }
-.btn-primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.btn-primary, a.btn-primary, a.btn-primary:visited { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
 .btn-wide { width: 100%; } @media (min-width: 480px) { .btn-wide { width: auto; min-width: 16rem; } }
 .btn[disabled] { opacity: .6; cursor: wait; }
 .btn-row { display: flex; gap: .5rem; flex-wrap: wrap; }
