@@ -15,6 +15,7 @@ permalink: /api/petitions.json
       "community": {{ p.community | jsonify }},
       "summary": {{ p.summary | jsonify }},
       "organiser": {{ p.organiser | jsonify }},
+      "ask_statement": {{ p.ask_statement | default: false }},
       "organiser_contact": {{ p.organiser_contact | jsonify }},
       "paper": {{ p.paper | default: false }},
       "local_area": {{ p.local_area | default: empty | jsonify }},

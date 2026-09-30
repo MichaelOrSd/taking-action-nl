@@ -20,7 +20,7 @@ Anyone in Newfoundland and Labrador can propose a petition for this site. Send t
 - **Wording.** Respectful, factual, specific. No personal attacks. No claims about a company's conduct that the organiser cannot support with records.
 - **Honesty about effect.** No petition is legally binding. Every petition page says so.
 
-## What we do
+## What you get
 
 We build the page, connect the sign form, print the paper pages, and give you a dashboard to see and export signatures. It costs nothing. You deliver the petition and report back on the page.
 

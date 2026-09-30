@@ -16,7 +16,7 @@ It began with one street in Conception Bay South, where neighbours reported fume
 
 ## Who runs it
 
-This instance is run by {{ site.platform.owner }}. The organisers' contact details are given on each paper petition and at signing locations rather than published here, to keep personal information off the open internet. It is not affiliated with any government, town, company or political party.
+This site is run by {{ site.platform.owner }}. The organisers' contact details are given on each paper petition and at signing locations rather than published here, to keep personal information off the open internet. It is not affiliated with any government, town, company or political party.
 
 ## Open source
 
