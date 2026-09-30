@@ -70,8 +70,13 @@ label.req::after { content: " *"; color: var(--accent); font-weight: 700; } .req
 .signer .when { display: none; }
 .share { display: grid; grid-template-columns: auto 1fr; gap: 1rem; align-items: start; margin: 1rem 0; padding: .9rem 1rem; background: var(--card); border: 1px solid var(--line); border-radius: .6rem; }
 .share-qr { background: #fff; padding: 6px; border-radius: .4rem; line-height: 0; } .share-qr img, .share-qr canvas { display: block; }
-.share-lead { margin: 0 0 .5rem; font-weight: 700; }
-.share-btns { display: flex; flex-wrap: wrap; gap: .4rem; }
+.share-main { display: inline-flex; align-items: center; gap: .5rem; margin-bottom: .7rem; }
+.ico { width: 1.25em; height: 1.25em; fill: currentColor; flex: none; }
+.share-icons { display: flex; flex-wrap: wrap; gap: .35rem .6rem; }
+.share-ic { display: inline-flex; flex-direction: column; align-items: center; gap: .25rem; width: 4.4rem; padding: .5rem .2rem; border: 1px solid var(--line); border-radius: .6rem; background: var(--card); color: var(--ink); text-decoration: none; font: inherit; font-size: .72rem; cursor: pointer; }
+.share-ic .ico { width: 1.5rem; height: 1.5rem; } .share-ic:hover { border-color: var(--accent); color: var(--accent); }
+.share-compact .share-ic { width: 3.6rem; padding: .35rem .1rem; font-size: .66rem; } .share-compact .share-ic .ico { width: 1.25rem; height: 1.25rem; }
+.share-compact .share-main { padding: .45rem .8rem; font-size: .9rem; margin-bottom: .5rem; }
 .share-url { margin: .5rem 0 0; font-size: .85rem; word-break: break-all; } .share-msg { margin: .3rem 0 0; font-size: .85rem; min-height: 1em; }
 .share-compact { margin: .8rem 0 0; padding: .6rem .7rem; } .share-compact .share-lead { font-size: .9rem; margin-bottom: .3rem; } .share-compact .share-url { display: none; }
 @media (max-width: 480px) { .share { grid-template-columns: 1fr; } .share-qr { width: max-content; } }

@@ -17,7 +17,11 @@
     b.querySelector('.share-fb').href = 'https://www.facebook.com/sharer/sharer.php?u=' + q(url);
     b.querySelector('.share-x').href = 'https://twitter.com/intent/tweet?text=' + q(title) + '&url=' + q(url);
     const nat = b.querySelector('.share-native');
-    if (navigator.share && nat) { nat.hidden = false; nat.onclick = () => navigator.share({ title, text: title, url }).catch(() => {}); }
+    if (nat) nat.onclick = async () => {
+      if (navigator.share) { try { await navigator.share({ title, text: title, url }); } catch (e) {} return; }
+      // No system share sheet (most desktops): copy the link and point at the options.
+      try { await navigator.clipboard.writeText(url); say('Link copied. Or pick a way to share below.'); } catch (e) { say('Pick a way to share below.'); }
+    };
     b.querySelector('.share-copy').onclick = async () => {
       try { await navigator.clipboard.writeText(url); say('Link copied.'); }
       catch (e) { window.prompt('Copy this link:', url); }
