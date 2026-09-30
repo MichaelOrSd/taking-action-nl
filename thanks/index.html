@@ -26,12 +26,32 @@ permalink: /thanks/
   document.getElementById('back-link').href = url;
   if (!window.TA || /YOUR-PROJECT/.test(window.TA.supabaseUrl)) { msg.textContent = 'Signing is not switched on yet.'; return; }
   const sb = window.supabase.createClient(window.TA.supabaseUrl, window.TA.supabaseAnonKey);
-  // The magic link puts the session in the URL hash; the client picks it up.
+  async function finish() {
+    const { data, error } = await sb.rpc('confirm_my_signature', { p_slug: slug });
+    if (error) { msg.textContent = 'Could not confirm: ' + error.message; return; }
+    msg.hidden = true; document.getElementById('thanks-next').hidden = false;
+    await sb.auth.signOut();
+  }
+  // Preferred path: the email links here with a token_hash, and nothing is
+  // consumed until the person presses the button. Mail apps and link scanners
+  // that pre-open links therefore cannot burn the one-time code.
+  const tokenHash = params.get('token_hash');
+  if (tokenHash) {
+    msg.innerHTML = '';
+    const b = document.createElement('button'); b.className = 'btn btn-primary'; b.type = 'button'; b.textContent = 'Confirm my signature';
+    const note = document.createElement('p'); note.className = 'muted'; note.textContent = 'One press confirms it is you.';
+    msg.appendChild(b); msg.appendChild(note);
+    b.onclick = async () => {
+      b.disabled = true; note.textContent = 'Confirming…';
+      const { error } = await sb.auth.verifyOtp({ token_hash: tokenHash, type: params.get('type') || 'magiclink' });
+      if (error) { note.textContent = 'This link has expired or was already used. Sign again to get a new one.'; return; }
+      await finish();
+    };
+    return;
+  }
+  // Older path: the session arrives in the URL hash.
   const { data: { session } } = await sb.auth.getSession();
   if (!session) { msg.textContent = 'This link has expired or was already used. If your signature is not counted, sign again and click the new link.'; return; }
-  const { data, error } = await sb.rpc('confirm_my_signature', { p_slug: slug });
-  if (error) { msg.textContent = 'Could not confirm: ' + error.message; return; }
-  msg.hidden = true; document.getElementById('thanks-next').hidden = false;
-  await sb.auth.signOut();
+  await finish();
 })();
 </script>
