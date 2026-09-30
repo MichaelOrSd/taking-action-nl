@@ -2,6 +2,7 @@
 <div class="share" data-url="{{ include.url }}" data-title="{{ include.title | escape }}">
   <div class="share-qr" aria-label="QR code linking to this petition"></div>
   <div class="share-body">
+   <div class="share-drop">
     <button type="button" class="btn {% if include.primary %}btn-primary{% endif %} share-main" aria-haspopup="menu" aria-expanded="false">
       <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l4 4h-3v8h-2V7H8l4-4z"/><path d="M5 12v7a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-7h-2v6H7v-6H5z"/></svg>
       Share
@@ -15,6 +16,7 @@
       <button type="button" class="share-item share-copy" role="menuitem"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M10.6 13.4a1 1 0 0 1 0-1.4l3-3a3 3 0 0 1 4.2 4.2l-1.5 1.5-1.4-1.4 1.5-1.5a1 1 0 0 0-1.4-1.4l-3 3a1 1 0 0 0 1.4 1.4l.4-.4 1.4 1.4-.4.4a3 3 0 0 1-4.2-4.2z"/><path d="M13.4 10.6a1 1 0 0 1 0 1.4l-3 3a3 3 0 0 1-4.2-4.2l1.5-1.5 1.4 1.4-1.5 1.5a1 1 0 0 0 1.4 1.4l3-3a1 1 0 0 0-1.4-1.4l-.4.4-1.4-1.4.4-.4a3 3 0 0 1 4.2 4.2z"/></svg>Copy link</button>
       <button type="button" class="share-item share-qr-dl" role="menuitem"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3h8v8H3V3zm2 2v4h4V5H5zm8-2h8v8h-8V3zm2 2v4h4V5h-4zM3 13h8v8H3v-8zm2 2v4h4v-4H5zm8-2h3v3h-3v-3zm5 0h3v3h-3v-3zm-5 5h3v3h-3v-3zm5 0h3v3h-3v-3z"/></svg>Download QR code</button>
     </div>
+   </div>
     <p class="share-msg meta" aria-live="polite"></p>
   </div>
 </div>
