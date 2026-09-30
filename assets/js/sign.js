@@ -80,7 +80,9 @@
   }
   function plainError(e) {
     const m = (e && e.message) || '';
-    if (/duplicate|already/i.test(m)) return 'This email has already signed this petition. Thank you.';
+    if (/DUPLICATE_EMAIL/.test(m)) return 'This email has already signed this petition. Thank you.';
+    if (/DUPLICATE_PERSON/.test(m)) return 'Someone with this name at this address has already signed this petition. If that is not you, add a middle initial or check the address.';
+    if (/duplicate|already/i.test(m)) return 'This looks like a repeat of a signature already on the petition. Thank you.';
     if (/fetch|network|Failed to|50\d/i.test(m)) return 'Could not reach the server. Check your connection and press Sign again; nothing was lost.';
     return 'Something went wrong. Please try again in a moment.';
   }
