@@ -14,10 +14,11 @@ permalink: /admin/
 <div id="dash" hidden>
   <p>Signed in as <span id="who"></span>. <button class="btn btn-small" id="out" type="button">Sign out</button></p>
   <div class="field"><label for="pet">Petition</label><select id="pet"></select></div>
+  <div class="field"><label for="q">Search names, emails, streets</label><input id="q" type="search" autocomplete="off"></div>
   <p><button class="btn" id="refresh" type="button">Refresh</button> <button class="btn" id="csv" type="button">Download CSV (council list)</button> <button class="btn" id="csv-stmt" type="button">Download statement volunteers</button> <button class="btn" id="csv-sup" type="button" hidden>Download supporter list</button></p>
   <p id="sup-stats" class="muted"></p>
   <p id="stats" class="muted"></p>
-  <div style="overflow-x:auto"><table id="tbl"><thead><tr><th>Date</th><th>Name</th><th>Address</th><th>Community</th><th>Prov.</th><th>Phone</th><th>Confirmed</th><th>Local</th><th>Paper</th><th>Updates</th><th>Statement</th><th></th></tr></thead><tbody></tbody></table></div>
+  <div style="overflow-x:auto"><table id="tbl"><thead><tr><th>Date</th><th>Petition</th><th>Name</th><th>Email</th><th>Address</th><th>Community</th><th>Prov.</th><th>Phone</th><th>Confirmed</th><th>Local</th><th>Paper</th><th>Updates</th><th>Statement</th><th></th></tr></thead><tbody></tbody></table></div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script>
@@ -40,16 +41,23 @@ permalink: /admin/
   }
   async function load() {
     const slug = $('pet').value;
-    const { data, error } = await sb.from('signatures').select('id,created_at,full_name,street,community,province,postal_code,email,phone,confirmed,in_local_area,paper_signed,consent_updates,consent_statement').eq('petition_slug', slug).order('created_at', { ascending: false });
+    const query = sb.from('signatures').select('id,petition_slug,created_at,full_name,street,community,province,postal_code,email,phone,confirmed,in_local_area,paper_signed,consent_updates,consent_statement').order('created_at', { ascending: false });
+    const qr = slug === '__all' ? query : query.eq('petition_slug', slug);
+    const { data, error } = await qr;
     if (error) { $('stats').textContent = error.message; return; }
     rows = data || [];
+    render();
+  }
+  function render() {
+    const term = $('q').value.trim().toLowerCase();
+    const shown = term ? rows.filter(r => [r.full_name, r.email, r.street, r.community, r.petition_slug].join(' ').toLowerCase().includes(term)) : rows;
     const conf = rows.filter(r => r.confirmed).length, paper = rows.filter(r => r.paper_signed).length, local = rows.filter(r => r.in_local_area && r.confirmed).length;
-    $('stats').textContent = rows.length + ' signatures, ' + conf + ' confirmed, ' + local + ' confirmed in local area, ' + paper + ' also on paper.';
+    $('stats').textContent = (term ? shown.length + ' shown of ' : '') + rows.length + ' signatures, ' + conf + ' confirmed, ' + local + ' confirmed in local area, ' + paper + ' also on paper.';
     const tb = document.querySelector('#tbl tbody'); tb.innerHTML = '';
-    for (const r of rows) {
+    for (const r of shown) {
       const tr = document.createElement('tr');
       const esc = s => String(s == null ? '' : s).replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
-      tr.innerHTML = '<td>' + esc(r.created_at.slice(0,10)) + '</td><td>' + esc(r.full_name) + '</td><td>' + esc(r.street) + '</td><td>' + esc(r.community) + '</td><td>' + esc(r.province) + '</td><td>' + esc(r.phone) + '</td><td>' + (r.confirmed ? 'yes' : 'no') + '</td><td>' + (r.in_local_area ? 'yes' : '') + '</td><td><input type="checkbox" data-id="' + r.id + '" class="paper" ' + (r.paper_signed ? 'checked' : '') + '></td><td>' + (r.consent_updates ? 'yes' : '') + '</td><td>' + (r.consent_statement ? 'yes' : '') + '</td><td><button class="btn btn-small del" data-id="' + r.id + '" type="button">Remove</button></td>';
+      tr.innerHTML = '<td>' + esc(r.created_at.slice(0,10)) + '</td><td>' + esc(r.petition_slug) + '</td><td>' + esc(r.full_name) + '</td><td>' + esc(r.email) + '</td><td>' + esc(r.street) + '</td><td>' + esc(r.community) + '</td><td>' + esc(r.province) + '</td><td>' + esc(r.phone) + '</td><td>' + (r.confirmed ? 'yes' : 'no') + '</td><td>' + (r.in_local_area ? 'yes' : '') + '</td><td><input type="checkbox" data-id="' + r.id + '" class="paper" ' + (r.paper_signed ? 'checked' : '') + '></td><td>' + (r.consent_updates ? 'yes' : '') + '</td><td>' + (r.consent_statement ? 'yes' : '') + '</td><td><button class="btn btn-small del" data-id="' + r.id + '" type="button">Remove</button></td>';
       tb.appendChild(tr);
     }
     tb.querySelectorAll('.paper').forEach(cb => cb.onchange = async () => { await sb.from('signatures').update({ paper_signed: cb.checked }).eq('id', cb.dataset.id); });
@@ -60,9 +68,10 @@ permalink: /admin/
     const out = [cols.join(',')].concat(list.map(r => cols.map(c => q(r[c])).join(','))).join('\n');
     const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([out], { type: 'text/csv' })); a.download = $('pet').value + '-' + (cols.includes('email') ? 'statements' : 'council') + '.csv'; a.click();
   }
-  $('csv').onclick = () => csv(rows.filter(r => r.confirmed), ['created_at','full_name','street','community','province','postal_code','in_local_area','paper_signed']);
+  $('csv').onclick = () => csv(rows.filter(r => r.confirmed), ['petition_slug','created_at','full_name','street','community','province','postal_code','in_local_area','paper_signed']);
   $('csv-stmt').onclick = () => csv(rows.filter(r => r.confirmed && r.consent_statement), ['created_at','full_name','street','community','province','email','phone']);
   $('refresh').onclick = load;
+  $('q').oninput = render;
   $('pet').onchange = load;
   $('out').onclick = async () => { await sb.auth.signOut(); location.reload(); };
   const { data: { session } } = await sb.auth.getSession();
@@ -71,8 +80,9 @@ permalink: /admin/
   const { data: mine } = await sb.from('organisers').select('petition_slug');
   const slugs = (mine || []).map(m => m.petition_slug);
   const owner = slugs.includes('*');
-  const petSlugs = slugs.filter(s => s !== '*');
-  $('pet').innerHTML = petSlugs.map(s => '<option value="' + s + '">' + s + '</option>').join('') || '<option value="">(no petitions assigned to this email)</option>';
+  const allSlugs = [{% for p in site.petitions %}'{{ p.slug }}'{% unless forloop.last %},{% endunless %}{% endfor %}];
+  const petSlugs = owner ? ['__all'].concat(allSlugs) : slugs.filter(s => s !== '*');
+  $('pet').innerHTML = petSlugs.map(s => '<option value="' + s + '">' + (s === '__all' ? 'All petitions' : s) + '</option>').join('') || '<option value="">(no petitions assigned to this email)</option>';
   if (petSlugs.length) load();
   if (owner) {
     const { data: sup } = await sb.from('supporters').select('created_at,full_name,email,community,province,source,unsubscribe_token,unsubscribed_at').order('created_at', { ascending: false });
