@@ -16,7 +16,7 @@ Anyone in Newfoundland and Labrador can propose a petition for this site. Send t
 ## The rules we apply
 
 - **House of Assembly petitions** must follow the House's form: the reasons, the prayer ("We, the undersigned, call upon the House of Assembly to urge the Government of Newfoundland and Labrador to …"), and the public-disclosure statement on every page. The House accepts **original handwritten signatures only**. Any MHA may present a petition and none is obliged to. This site prints House-format pages for ink signatures; the online list is for councils and for organising.
-- **Town council petitions** have no fixed form in NL. Councils list "petitions" on their agendas and record them in the minutes. A list with confirmed names and civic addresses carries weight.
+- **Town council petitions** have no fixed form in NL. Councils list "petitions" on their agendas and record them in the minutes. A list with confirmed names and civic addresses carries weight. Ask the town clerk how petitions reach Council: in some towns, Conception Bay South among them, residents cannot speak on a petition and the ward councillor presents it on their behalf, so contact your councillor early. Ask too whether electronic signatures are accepted; Conception Bay South accepts handwritten and electronic signatures together.
 - **Wording.** Respectful, factual, specific. No personal attacks. No claims about a company's conduct that the organiser cannot support with records.
 - **Honesty about effect.** No petition is legally binding. Every petition page says so.
 

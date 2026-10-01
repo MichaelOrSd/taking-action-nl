@@ -31,7 +31,7 @@ asks:
     text: |
       We, the undersigned, call upon the House of Assembly to urge the Government of Newfoundland and Labrador to put public safety and health first: to investigate the emissions from this facility under the *Environmental Protection Act*, to require any controls necessary to stop fumes reaching neighbouring homes, and to report the results to residents.
   - to: the Council of the Town of Conception Bay South
-    how: tabled under "Visitors, Presentations, Petitions" at a public council meeting, with the online list and the paper pages
+    how: presented at a public council meeting by the Ward 1 Councillor on residents' behalf, with the online list and the paper pages together (the Town has confirmed it accepts handwritten and electronic signatures)
     text: |
       We, the undersigned residents, ask Council to put the safety and health of the public ahead of every other consideration in this matter: to confirm in writing the zoning status of 2638–2640 Topsail Road; to use its powers under the *Urban and Rural Planning Act, 2000* and the *Towns and Local Service Districts Act, 2023* to require effective emission controls at the facility; and to add an odour and fumes provision to the Noise and Nuisance By-law.
 ---
