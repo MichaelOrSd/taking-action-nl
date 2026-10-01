@@ -30,7 +30,7 @@ permalink: /admin/
   let rows = [];
   $('lb').onclick = async () => {
     const { error } = await sb.auth.signInWithOtp({ email: $('le').value.trim(), options: { emailRedirectTo: location.origin + base + '/admin/?login=1', shouldCreateUser: false } });
-    $('lm').textContent = error ? error.message : 'Check your email and click the sign-in link.';
+    $('lm').textContent = error ? error.message : 'Check your email and click the sign-in link. Look in Junk or Spam too.';
   };
   // Arriving from the email link: verify the token, then reload signed in.
   const lp = new URLSearchParams(location.search);
