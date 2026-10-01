@@ -91,11 +91,12 @@
 
   function showDone(fromOtherDevice) {
     clearInterval(pollTimer); pollTimer = null;
-    form.hidden = true; stepWait.hidden = true; stepDone.hidden = false; setStep(3);
+    form.hidden = true; stepWait.hidden = true; stepDone.hidden = false; setStep(4);
     const h = $('done-heading');
     loadCounts().then(() => { if (h && confirmedCount > 0) h.textContent = 'Thank you. You are signature number ' + confirmedCount.toLocaleString() + '.'; loadSigners(); });
     if (fromOtherDevice && $('done-other')) $('done-other').hidden = false;
     setTimeout(() => stepDone.scrollIntoView({ behavior: 'smooth', block: 'start' }), 150);
+    const shareBtn = document.querySelector('.share-section .share-main'); if (shareBtn) shareBtn.focus({ preventScroll: true });
   }
   if (new URLSearchParams(location.search).get('signed') === '1') {
     history.replaceState(null, '', location.pathname + '#sign');

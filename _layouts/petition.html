@@ -38,11 +38,6 @@ layout: default
     <p class="meta">Organised by {{ page.organiser }}. Opened {{ page.opened | date: "%-d %b %Y" }}. Contact details are on the paper petition.</p>
   </section>
 
-  <section class="share-section" id="share">
-    <h2>Share this petition</h2>
-    {% include share.html url=share_url title=page.title %}
-  </section>
-
   <section class="signers" id="signers">
     <h2>Who has signed</h2>
     <p class="meta">Initials and community only.</p>
@@ -57,8 +52,15 @@ layout: default
       <li class="step on" aria-current="step">1 Your details</li>
       <li class="step">2 Confirm by email</li>
       <li class="step">3 Done</li>
+      <li class="step">4 Share</li>
     </ol>
     {% include sign-form.html %}
+  </section>
+
+  <section class="share-section" id="share">
+    <h2>Step 4: share this petition</h2>
+    <p>One neighbour is enough. Show them the QR code, or press Share.</p>
+    {% include share.html url=share_url title=page.title primary=true %}
   </section>
 
   {% if page.paper %}

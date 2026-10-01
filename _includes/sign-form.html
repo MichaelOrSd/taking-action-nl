@@ -79,9 +79,8 @@
 <div id="sign-step-done" class="sign-step" hidden>
   <div class="card">
     <h3 id="done-heading">Thank you. Your signature is counted.</h3>
-    <p>Now share it with one neighbour. Ten seconds.</p>
-    {% assign share_url = page.url | absolute_url %}
-    {% include share.html url=share_url title=page.title primary=true %}
+    <p>One step left: share it with one neighbour. Ten seconds.</p>
+    <a class="btn btn-primary" href="#share">Go to step 4: Share</a>
     <p class="hint" id="done-other" hidden>Opened the email on another device? The page you started on has finished too.</p>
   </div>
   {% if page.paper %}
