@@ -38,5 +38,16 @@
     <p><strong>{{ site.title }}</strong> · <a href="{{ '/about/' | relative_url }}">About</a> · <a href="{{ '/privacy/' | relative_url }}">Privacy</a> · <a href="{{ '/start/' | relative_url }}">Start a petition</a> · <a href="{{ '/projects/' | relative_url }}">Projects</a> · <a href="https://github.com/MichaelOrSd/taking-action-nl">Source</a></p>
     <p>Run by {{ site.platform.owner }}. Not affiliated with any government, town or party.</p>
   </footer>
+<script>
+// A used or replaced email link lands here with an error in the address. Say so plainly.
+if (/error_code=otp_expired|error=access_denied/.test(location.hash)) {
+  var n = document.createElement('p');
+  n.setAttribute('role', 'alert');
+  n.style.cssText = 'max-width:44rem;margin:1rem auto;padding:.75rem 1rem;border:1px solid currentColor;border-radius:6px';
+  n.textContent = 'That email link has already been used or has been replaced by a newer one. If you asked for the email twice, use the newest one. Otherwise open the petition and sign again to get a fresh link.';
+  var m = document.querySelector('main') || document.body; m.insertBefore(n, m.firstChild);
+  history.replaceState(null, '', location.pathname + location.search);
+}
+</script>
 </body>
 </html>
