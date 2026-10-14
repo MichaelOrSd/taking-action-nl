@@ -11,6 +11,8 @@
   <meta property="og:url" content="{{ page.url | absolute_url }}">
   <meta property="og:image" content="{{ '/assets/og.png' | absolute_url }}">
   <meta name="twitter:card" content="summary_large_image">
+  <script>try { var t = localStorage.getItem('ta-theme'); if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t); } catch (e) {}</script>
+  <meta name="theme-color" content="#d52b1e">
   <link rel="canonical" href="{{ page.url | absolute_url }}">
   <link rel="stylesheet" href="{{ '/assets/css/site.css' | relative_url }}">
   <script>window.TA = { baseurl: "{{ site.baseurl }}", province: "{{ site.platform.province }}", provinceCode: "{{ site.platform.province_code }}" };</script>
@@ -27,6 +29,7 @@
       <a href="{{ '/#petitions' | relative_url }}">Petitions</a>
       <a href="{{ '/start/' | relative_url }}">Start a petition</a>
       <a href="{{ '/about/' | relative_url }}">About</a>
+      <button type="button" class="theme-toggle" id="theme-toggle" aria-label="Colour theme">Theme: Auto</button>
     </nav>
   </header>
 
@@ -39,6 +42,19 @@
     <p>Run by {{ site.platform.owner }}. Not affiliated with any government, town or party.</p>
   </footer>
 <script>
+// Theme button cycles Auto (follows the phone or computer) → Light → Dark.
+(function () {
+  var b = document.getElementById('theme-toggle'), root = document.documentElement, order = ['auto', 'light', 'dark'];
+  function cur() { return root.getAttribute('data-theme') || 'auto'; }
+  function label() { var c = cur(); b.textContent = 'Theme: ' + c.charAt(0).toUpperCase() + c.slice(1); }
+  b.addEventListener('click', function () {
+    var next = order[(order.indexOf(cur()) + 1) % order.length];
+    if (next === 'auto') root.removeAttribute('data-theme'); else root.setAttribute('data-theme', next);
+    try { if (next === 'auto') localStorage.removeItem('ta-theme'); else localStorage.setItem('ta-theme', next); } catch (e) {}
+    label();
+  });
+  label();
+})();
 // A used or replaced email link lands here with an error in the address. Say so plainly.
 if (/error_code=otp_expired|error=access_denied/.test(location.hash)) {
   var n = document.createElement('p');
