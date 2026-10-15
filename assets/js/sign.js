@@ -106,15 +106,28 @@
   let pending = null, clientToken = null, lastSent = 0, pollTimer = null, pollStart = 0, cooldownTimer = null;
   const redirect = location.origin + (window.TA.baseurl || '') + '/thanks/?p=' + encodeURIComponent(slug);
 
+  const signSection = document.getElementById('sign'), shareSection = document.getElementById('share');
+  // Scroll so the "Sign" heading and the step pills are in view, not just the current card.
+  function scrollToSteps() { (signSection || form).scrollIntoView({ block: 'start', behavior: 'smooth' }); }
   function showDone(fromOtherDevice) {
     clearInterval(pollTimer); pollTimer = null;
     form.hidden = true; stepWait.hidden = true; stepDone.hidden = false; setStep(4);
+    if (shareSection) shareSection.hidden = false; // the QR code and Share button appear only once the signature is counted
     const h = $('done-heading');
     loadCounts().then(() => { if (h && confirmedCount > 0) h.textContent = 'Thank you. You are signature number ' + confirmedCount.toLocaleString() + '.'; loadSigners(); });
     if (fromOtherDevice && $('done-other')) $('done-other').hidden = false;
-    setTimeout(() => stepDone.scrollIntoView({ behavior: 'smooth', block: 'start' }), 150);
+    setTimeout(scrollToSteps, 150);
     const shareBtn = document.querySelector('.share-section .share-main'); if (shareBtn) shareBtn.focus({ preventScroll: true });
   }
+  // The confirmation page (opened from the email) asks whether this tab is still waiting. If so, it
+  // tells this tab to finish and stays put, so the signer ends up with one petition tab, not two.
+  let chan = null; try { chan = new BroadcastChannel('ta-sign'); } catch (e) { chan = null; }
+  if (chan) chan.onmessage = (ev) => {
+    const m = ev.data || {};
+    if (m.slug !== slug || stepWait.hidden) return;
+    if (m.type === 'ping') chan.postMessage({ type: 'pong', slug });
+    if (m.type === 'confirmed') showDone(false);
+  };
   if (new URLSearchParams(location.search).get('signed') === '1') {
     history.replaceState(null, '', location.pathname + '#sign');
     showDone(true);
@@ -176,7 +189,7 @@
       btn.classList.add('btn-success'); btn.textContent = 'Already signed. Thank you';
       await new Promise(r => setTimeout(r, 900));
       btn.disabled = false; btn.classList.remove('btn-success'); btn.textContent = btnText;
-      clearSig(); showDone(false); stepDone.scrollIntoView({ block: 'start', behavior: 'smooth' });
+      clearSig(); showDone(false);
       return;
     }
     if (aErr) { btn.disabled = false; btn.textContent = btnText; say(msg, plainError(aErr), 'err'); msg.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); return; }
@@ -188,9 +201,8 @@
     btn.disabled = false; btn.classList.remove('btn-success'); btn.textContent = btnText;
     $('wait-email').textContent = email;
     form.hidden = true; stepWait.hidden = false; setStep(2);
-    stepWait.scrollIntoView({ block: 'start', behavior: 'smooth' });
+    scrollToSteps();
     if (err) say(waitMsg, 'We saved your details but could not send the email. Press "Send it again".', 'err');
-    stepWait.scrollIntoView({ behavior: 'smooth', block: 'start' });
     startPolling();
   });
 

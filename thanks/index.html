@@ -24,15 +24,37 @@ permalink: /thanks/
     await sb.auth.signOut();
     return true;
   }
+  // Is the tab the person signed on still open and waiting? Ask it; if it answers, let it finish
+  // and keep this tab quiet instead of loading the petition a second time.
+  function handBack() {
+    let chan; try { chan = new BroadcastChannel('ta-sign'); } catch (e) { return Promise.resolve(false); }
+    return new Promise(resolve => {
+      let settled = false;
+      const end = v => { if (!settled) { settled = true; chan.close(); resolve(v); } };
+      chan.onmessage = ev => { if (ev.data && ev.data.type === 'pong' && ev.data.slug === slug) { chan.postMessage({ type: 'confirmed', slug }); end(true); } };
+      chan.postMessage({ type: 'ping', slug });
+      setTimeout(() => end(false), 600);
+    });
+  }
+  async function done() {
+    if (!(await finish())) return;
+    if (await handBack()) {
+      document.querySelector('h1').textContent = 'Confirmed';
+      msg.textContent = 'Your signature is counted. The page you signed on has finished too, so you can close this tab and go back to it.';
+      document.getElementById('back-link').textContent = 'Or open the petition here';
+      return;
+    }
+    location.replace(url + '?signed=1#sign');
+  }
   const tokenHash = params.get('token_hash');
   if (tokenHash) {
     const { error } = await sb.auth.verifyOtp({ token_hash: tokenHash, type: params.get('type') || 'magiclink' });
     if (error) { msg.textContent = expired; return; }
-    if (await finish()) location.replace(url + '?signed=1#sign');
+    await done();
     return;
   }
   const { data: { session } } = await sb.auth.getSession();
   if (!session) { msg.textContent = expired; return; }
-  if (await finish()) location.replace(url + '?signed=1#sign');
+  await done();
 })();
 </script>

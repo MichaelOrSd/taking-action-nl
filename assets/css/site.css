@@ -85,7 +85,8 @@ p { margin: 0 0 .75rem; }
 .loop .row { grid-template-columns: 1fr 1fr; }
 
 /* Form */
-.sign { margin-top: 2.5rem; padding-top: .5rem; border-top: 1px solid var(--line); }
+.sign { margin-top: 2.5rem; padding-top: .5rem; border-top: 1px solid var(--line); scroll-margin-top: .75rem; }
+.share-section[hidden] { display: none; }
 .sign-form .field, .field { margin: .9rem 0; } label { display: block; font-weight: 600; margin-bottom: .3rem; }
 input[type=text], input[type=email], input[type=tel], input[type=number], input[type=search], select { width: 100%; min-height: 2.75rem; padding: .6rem .7rem; border: 1px solid var(--line); border-radius: .45rem; background: var(--card); color: var(--ink); font: inherit; }
 input:hover, select:hover { border-color: var(--muted); }
