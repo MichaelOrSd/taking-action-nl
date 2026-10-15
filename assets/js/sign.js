@@ -169,14 +169,18 @@
       user_agent: navigator.userAgent.slice(0, 200),
       client_token: clientToken
     };
-    const btn = $('sign-submit'); btn.disabled = true; say(msg, 'Saving…');
+    const btn = $('sign-submit'), btnText = btn.textContent; btn.disabled = true; btn.textContent = 'Sending\u2026'; say(msg, '');
     const { error: aErr } = await sb.rpc('add_signature', { s: pending });
-    if (aErr) { btn.disabled = false; say(msg, plainError(aErr), 'err'); return; }
+    if (aErr) { btn.disabled = false; btn.textContent = btnText; say(msg, plainError(aErr), 'err'); msg.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); return; }
     if (wantsUpdates) sb.rpc('join_supporters', { p_email: email, p_name: pending.full_name, p_community: community, p_province: pending.province, p_source: slug }).then(() => {});
     const err = await sendLink(email);
-    btn.disabled = false; say(msg, '');
+    // The button itself says what happened, since the message under it can sit below the fold.
+    btn.classList.add('btn-success'); btn.textContent = 'Sent. Check your email'; say(msg, '');
+    await new Promise(r => setTimeout(r, 900));
+    btn.disabled = false; btn.classList.remove('btn-success'); btn.textContent = btnText;
     $('wait-email').textContent = email;
     form.hidden = true; stepWait.hidden = false; setStep(2);
+    stepWait.scrollIntoView({ block: 'start', behavior: 'smooth' });
     if (err) say(waitMsg, 'We saved your details but could not send the email. Press "Send it again".', 'err');
     stepWait.scrollIntoView({ behavior: 'smooth', block: 'start' });
     startPolling();

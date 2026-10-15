@@ -49,6 +49,7 @@ p { margin: 0 0 .75rem; }
 .btn { display: inline-flex; align-items: center; justify-content: center; gap: .45rem; min-height: 2.75rem; padding: .6rem 1.1rem; border-radius: .5rem; border: 1px solid var(--line); background: var(--card); color: var(--ink); text-decoration: none; font: inherit; font-weight: 600; cursor: pointer; }
 .btn-primary:hover { filter: brightness(.92); }
 .btn-primary, a.btn-primary, a.btn-primary:visited { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.btn-success, .btn-success[disabled] { background: var(--ok); border-color: var(--ok); color: #fff; opacity: 1; cursor: default; }
 .btn-wide { width: 100%; } @media (min-width: 480px) { .btn-wide { width: auto; min-width: 16rem; } }
 .btn:hover { border-color: var(--muted); } .btn:active { transform: translateY(1px); }
 .btn[disabled] { opacity: .6; cursor: wait; }
