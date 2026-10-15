@@ -106,18 +106,17 @@
   let pending = null, clientToken = null, lastSent = 0, pollTimer = null, pollStart = 0, cooldownTimer = null;
   const redirect = location.origin + (window.TA.baseurl || '') + '/thanks/?p=' + encodeURIComponent(slug);
 
-  const signSection = document.getElementById('sign'), shareSection = document.getElementById('share');
+  const signSection = document.getElementById('sign');
   // Scroll so the "Sign" heading and the step pills are in view, not just the current card.
   function scrollToSteps() { (signSection || form).scrollIntoView({ block: 'start', behavior: 'smooth' }); }
   function showDone(fromOtherDevice) {
     clearInterval(pollTimer); pollTimer = null;
     form.hidden = true; stepWait.hidden = true; stepDone.hidden = false; setStep(4);
-    if (shareSection) shareSection.hidden = false; // the QR code and Share button appear only once the signature is counted
     const h = $('done-heading');
     loadCounts().then(() => { if (h && confirmedCount > 0) h.textContent = 'Thank you. You are signature number ' + confirmedCount.toLocaleString() + '.'; loadSigners(); });
     if (fromOtherDevice && $('done-other')) $('done-other').hidden = false;
     setTimeout(scrollToSteps, 150);
-    const shareBtn = document.querySelector('.share-section .share-main'); if (shareBtn) shareBtn.focus({ preventScroll: true });
+    const shareBtn = stepDone.querySelector('.share-main'); if (shareBtn) shareBtn.focus({ preventScroll: true });
   }
   // The confirmation page (opened from the email) asks whether this tab is still waiting. If so, it
   // tells this tab to finish and stays put, so the signer ends up with one petition tab, not two.

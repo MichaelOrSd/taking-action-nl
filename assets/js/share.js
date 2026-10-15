@@ -24,7 +24,8 @@
   document.querySelectorAll('.share-quick').forEach(b => {
     b.addEventListener('click', async () => {
       if (await nativeShare(b.dataset.url, b.dataset.title)) return;
-      const full = b.closest('article') && document.querySelector('.share .share-main');
+      const all = Array.from(document.querySelectorAll('.share .share-main')).filter(el => el.offsetParent !== null);
+      const full = b.closest('article') && all[0]; // only a visible share block (the Done card shows one after signing)
       if (full) { full.scrollIntoView({ behavior: 'smooth', block: 'center' }); setTimeout(() => full.click(), 400); return; }
       await copy(b.dataset.url, t => { const old = b.textContent; b.textContent = t; setTimeout(() => { b.textContent = old; }, 2000); });
     });
