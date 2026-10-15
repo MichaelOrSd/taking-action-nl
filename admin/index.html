@@ -27,8 +27,7 @@ permalink: /admin/
     </div>
   </div>
   <p id="sup-stats" class="muted"></p>
-  <div class="table-wrap"><table id="tbl"><thead><tr><th>Date</th><th class="col-pet">Petition</th><th>Name</th><th>Email</th><th>Address</th><th>Community</th><th>Prov.</th><th>Phone</th><th>Status</th><th>Local</th><th>Paper</th><th>Updates</th><th>Statement</th><th><span class="vh">Actions</span></th></tr></thead><tbody></tbody></table></div>
-  <p class="hint scroll-hint">Swipe the table sideways to see every column.</p>
+  <ul class="sig-list" id="sig-list" aria-live="polite"></ul>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script>
@@ -49,36 +48,60 @@ permalink: /admin/
     history.replaceState(null, '', location.pathname);
     if (error) { $('lm').textContent = 'That link has expired or was already used. Ask for a new one.'; $('lm').className = 'form-msg err'; } else { location.reload(); return; }
   }
-  const tb = document.querySelector('#tbl tbody');
-  const state = (text, kind) => { tb.innerHTML = '<tr><td colspan="14" class="table-state ' + (kind || '') + '">' + text + '</td></tr>'; };
+  const list = $('sig-list');
+  const esc = v => String(v == null ? '' : v).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  const state = (text, kind) => { list.innerHTML = '<li class="list-state ' + (kind || '') + '">' + text + '</li>'; };
   async function load() {
     const slug = $('pet').value;
-    document.getElementById('tbl').classList.toggle('one-petition', slug !== '__all');
-    state('Loading\u2026');
+    list.classList.toggle('one-petition', slug !== '__all');
+    state('Loading…');
     const query = sb.from('signatures').select('id,petition_slug,created_at,full_name,street,community,province,postal_code,email,phone,confirmed,in_local_area,paper_signed,consent_updates,consent_statement').order('created_at', { ascending: false });
     const qr = slug === '__all' ? query : query.eq('petition_slug', slug);
     const { data, error } = await qr;
-    if (error) { state('Could not load signatures: ' + error.message + ' Press Refresh to try again.', 'err'); return; }
+    if (error) { state('Could not load signatures: ' + esc(error.message) + ' Press Refresh to try again.', 'err'); return; }
     rows = data || [];
     render();
   }
+  const tick = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7"/></svg>';
+  const chip = (on, label) => on ? '<span class="chip">' + tick + label + '</span>' : '';
   function render() {
     const term = $('q').value.trim().toLowerCase();
     const shown = term ? rows.filter(r => [r.full_name, r.email, r.street, r.community, r.petition_slug].join(' ').toLowerCase().includes(term)) : rows;
     const conf = rows.filter(r => r.confirmed).length, paper = rows.filter(r => r.paper_signed).length, local = rows.filter(r => r.in_local_area && r.confirmed).length;
     $('stats').innerHTML = (term ? '<li><b>' + shown.length + '</b> shown of ' + rows.length + '</li>' : '<li><b>' + rows.length + '</b> signed</li>') + '<li><b>' + conf + '</b> confirmed</li><li><b>' + local + '</b> local</li><li><b>' + paper + '</b> on paper</li>';
-    tb.innerHTML = '';
+    list.innerHTML = '';
     if (!rows.length) { state('No signatures yet. Share the petition link to get the first one.'); return; }
-    if (!shown.length) { state('Nothing matches \u201c' + $('q').value.trim().replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])) + '\u201d.'); return; }
-    const tick = '<span class="tick"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7"/></svg><span class="vh">yes</span></span>';
+    if (!shown.length) { state('Nothing matches “' + esc($('q').value.trim()) + '”.'); return; }
     for (const r of shown) {
-      const tr = document.createElement('tr');
-      const esc = s => String(s == null ? '' : s).replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
-      tr.innerHTML = '<td class="num">' + esc(r.created_at.slice(0,10)) + '</td><td class="sub col-pet">' + esc(r.petition_slug) + '</td><td class="name">' + esc(r.full_name) + '</td><td class="sub">' + esc(r.email) + '</td><td>' + esc(r.street) + '</td><td>' + esc(r.community) + '</td><td class="sub">' + esc(r.province) + '</td><td class="num">' + esc(r.phone) + '</td><td>' + (r.confirmed ? '<span class="pill pill-ok">Confirmed</span>' : '<span class="pill pill-wait">Waiting</span>') + '</td><td class="ctr">' + (r.in_local_area ? tick : '') + '</td><td class="ctr"><input type="checkbox" data-id="' + r.id + '" class="paper" aria-label="Also signed on paper" ' + (r.paper_signed ? 'checked' : '') + '></td><td class="ctr">' + (r.consent_updates ? tick : '') + '</td><td class="ctr">' + (r.consent_statement ? tick : '') + '</td><td class="act"><button class="btn btn-small btn-quiet-danger del" data-id="' + r.id + '" type="button">Remove</button></td>';
-      tb.appendChild(tr);
+      const li = document.createElement('li'); li.className = 'sig'; li.dataset.id = r.id;
+      const addr = [r.street, r.community, r.province, r.postal_code].filter(Boolean).map(esc).join(', ');
+      const contact = [r.email, r.phone].filter(Boolean).map(esc).join(' · ');
+      li.innerHTML = '<div class="sig-main">'
+        + '<div class="sig-head"><span class="name">' + esc(r.full_name) + '</span>' + (r.confirmed ? '<span class="pill pill-ok">Confirmed</span>' : '<span class="pill pill-wait">Waiting for email click</span>') + '</div>'
+        + '<div class="sig-line">' + contact + '</div>'
+        + '<div class="sig-line">' + addr + '</div>'
+        + '<div class="sig-meta"><span class="sub">' + esc(r.created_at.slice(0,10)) + '</span><span class="sub col-pet">' + esc(r.petition_slug) + '</span>' + chip(r.in_local_area, 'Local') + chip(r.consent_updates, 'Updates') + chip(r.consent_statement, 'Statement') + '</div>'
+        + '</div><div class="sig-side">'
+        + '<label class="check check-small"><input type="checkbox" class="paper" data-id="' + r.id + '" ' + (r.paper_signed ? 'checked' : '') + '> On paper</label>'
+        + '<button class="btn btn-small btn-quiet-danger del" data-id="' + r.id + '" type="button">Remove</button>'
+        + '</div>';
+      list.appendChild(li);
     }
-    tb.querySelectorAll('.paper').forEach(cb => cb.onchange = async () => { await sb.from('signatures').update({ paper_signed: cb.checked }).eq('id', cb.dataset.id); });
-    tb.querySelectorAll('.del').forEach(b => b.onclick = async () => { if (confirm('Remove this signature? This cannot be undone.')) { await sb.from('signatures').delete().eq('id', b.dataset.id); load(); } });
+    list.querySelectorAll('.paper').forEach(cb => cb.onchange = async () => {
+      const { error } = await sb.from('signatures').update({ paper_signed: cb.checked }).eq('id', cb.dataset.id);
+      if (error) { cb.checked = !cb.checked; alert('Could not save: ' + error.message); return; }
+      const r = rows.find(x => String(x.id) === cb.dataset.id); if (r) r.paper_signed = cb.checked;
+      render();
+    });
+    list.querySelectorAll('.del').forEach(b => b.onclick = async () => {
+      const r = rows.find(x => String(x.id) === b.dataset.id);
+      if (!confirm('Remove the signature of ' + (r ? r.full_name : 'this person') + '? This cannot be undone.')) return;
+      b.disabled = true; b.textContent = 'Removing…';
+      const { error } = await sb.from('signatures').delete().eq('id', b.dataset.id);
+      if (error) { b.disabled = false; b.textContent = 'Remove'; alert('Could not remove: ' + error.message); return; }
+      rows = rows.filter(x => String(x.id) !== b.dataset.id);
+      render();
+    });
   }
   function csv(list, cols) {
     const q = v => '"' + String(v == null ? '' : v).replace(/"/g, '""') + '"';
@@ -104,7 +127,7 @@ permalink: /admin/
   if (owner) {
     const { data: sup } = await sb.from('supporters').select('created_at,full_name,email,community,province,source,unsubscribe_token,unsubscribed_at').order('created_at', { ascending: false });
     const live = (sup || []).filter(r => !r.unsubscribed_at);
-    $('sup-stats').textContent = 'Supporter pool: ' + live.length + ' people opted in to hear about future petitions' + ((sup || []).length - live.length ? ' (' + ((sup || []).length - live.length) + ' unsubscribed)' : '') + '.';
+    $('sup-stats').textContent = 'Supporter pool: ' + live.length + (live.length === 1 ? ' person' : ' people') + ' opted in to hear about future petitions' + ((sup || []).length - live.length ? ' (' + ((sup || []).length - live.length) + ' unsubscribed)' : '') + '.';
     $('csv-sup').hidden = false;
     $('csv-sup').onclick = () => {
       const rows = live.map(r => Object.assign({}, r, { unsubscribe_link: location.origin + base + '/unsubscribe/?t=' + r.unsubscribe_token }));
