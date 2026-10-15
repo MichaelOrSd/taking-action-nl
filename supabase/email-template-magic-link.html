@@ -1,4 +1,11 @@
+{{ if eq .RedirectTo "https://takingactionnl.ca/admin/?login=1" }}
+<h2 style="font-family:-apple-system,Helvetica,Arial,sans-serif;color:#1b1f23">Taking Action NL</h2>
+<p style="font-family:-apple-system,Helvetica,Arial,sans-serif;font-size:15px;color:#1b1f23">Here is your sign-in link for the organiser dashboard. It works once.</p>
+<p><a href="{{ .RedirectTo }}&token_hash={{ .TokenHash }}&type=magiclink" style="display:inline-block;padding:10px 16px;background:#d52b1e;color:#fff;text-decoration:none;border-radius:6px;font-family:-apple-system,Helvetica,Arial,sans-serif">Sign in to the dashboard</a></p>
+<p style="font-family:-apple-system,Helvetica,Arial,sans-serif;font-size:13px;color:#666">If you did not ask to sign in, ignore this email. Nothing happens unless the button is pressed.</p>
+{{ else }}
 <h2 style="font-family:-apple-system,Helvetica,Arial,sans-serif;color:#1b1f23">Taking Action NL</h2>
 <p style="font-family:-apple-system,Helvetica,Arial,sans-serif;font-size:15px;color:#1b1f23">Thank you for signing. Press the button to confirm it is you. Your signature counts once you do.</p>
-<p><a href="{{ .RedirectTo }}&token_hash={{ .TokenHash }}&type=magiclink" style="display:inline-block;padding:10px 16px;background:#b23a2b;color:#fff;text-decoration:none;border-radius:6px;font-family:-apple-system,Helvetica,Arial,sans-serif">Confirm my signature</a></p>
+<p><a href="{{ .RedirectTo }}&token_hash={{ .TokenHash }}&type=magiclink" style="display:inline-block;padding:10px 16px;background:#d52b1e;color:#fff;text-decoration:none;border-radius:6px;font-family:-apple-system,Helvetica,Arial,sans-serif">Confirm my signature</a></p>
 <p style="font-family:-apple-system,Helvetica,Arial,sans-serif;font-size:13px;color:#666">If you did not sign a petition on Taking Action NL, ignore this email. Nothing happens unless the button is pressed.</p>
+{{ end }}

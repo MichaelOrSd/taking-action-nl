@@ -16,6 +16,7 @@ permalink: /thanks/
   document.getElementById('back-link').href = url;
   if (!window.TA || /YOUR-PROJECT/.test(window.TA.supabaseUrl)) { msg.textContent = 'Signing is not switched on yet.'; return; }
   const sb = window.supabase.createClient(window.TA.supabaseUrl, window.TA.supabaseAnonKey);
+  if (!slug) { msg.textContent = 'This link is missing the petition name, so it cannot confirm a signature. Go back to the petition and sign again to get a fresh link.'; document.getElementById('back-link').href = location.origin + base + '/'; return; }
   const expired = 'This link has already been used or has expired. If you already confirmed, you are done. Otherwise sign again to get a fresh link.';
   async function finish() {
     const { error } = await sb.rpc('confirm_my_signature', { p_slug: slug });

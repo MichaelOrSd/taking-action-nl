@@ -43,6 +43,8 @@ permalink: /admin/
   };
   // Arriving from the email link: verify the token, then reload signed in.
   const lp = new URLSearchParams(location.search);
+  // A signature-confirmation link that landed here (redirect not on the Supabase allow list) belongs on /thanks/.
+  if (lp.get('token_hash') && !lp.has('login')) { location.replace(base + '/thanks/' + location.search); return; }
   if (lp.get('token_hash')) {
     const { error } = await sb.auth.verifyOtp({ token_hash: lp.get('token_hash'), type: lp.get('type') || 'magiclink' });
     history.replaceState(null, '', location.pathname);
