@@ -43,28 +43,45 @@
   }
   loadCounts().then(loadSigners);
 
-  // Signature pad. Resize only when the width really changes, and keep the strokes.
-  const canvas = $('signature-pad');
-  let pad = null, lastW = 0;
-  if (canvas && window.SignaturePad) {
+  // Signature pad. The form shows a tap target with a preview; drawing happens in a full-screen
+  // modal so the canvas is as big as the phone allows. Clear and Cancel sit at the top, Done at the bottom.
+  const canvas = $('signature-pad'), modal = $('sign-modal'), preview = $('pad-preview'), prompt = $('pad-prompt');
+  let pad = null, lastW = 0, lastH = 0, before = [];
+  function clearSig() { if (pad) pad.clear(); if (preview) { preview.hidden = true; preview.removeAttribute('src'); } if (prompt) prompt.hidden = false; }
+  if (canvas && modal && window.SignaturePad) {
     pad = new window.SignaturePad(canvas, { minWidth: 1, maxWidth: 2.5, penColor: '#111' });
-    const H = () => (window.innerWidth < 480 ? 150 : 160);
+    const wrap = $('pad-wrap'), padMsg = $('pad-msg');
     function resize() {
-      const w = canvas.parentElement.clientWidth;
-      if (w === lastW) return;
+      const w = wrap.clientWidth, h = wrap.clientHeight;
+      if (!w || !h || (w === lastW && h === lastH)) return;
       const strokes = lastW ? pad.toData() : [];
-      lastW = w;
+      lastW = w; lastH = h;
       const ratio = Math.max(window.devicePixelRatio || 1, 1);
-      canvas.width = w * ratio; canvas.height = H() * ratio;
-      canvas.style.width = w + 'px'; canvas.style.height = H() + 'px';
+      canvas.width = w * ratio; canvas.height = h * ratio;
+      canvas.style.width = w + 'px'; canvas.style.height = h + 'px';
       canvas.getContext('2d').scale(ratio, ratio);
       pad.clear();
       if (strokes.length) pad.fromData(strokes);
     }
-    window.addEventListener('resize', resize);
-    window.addEventListener('orientationchange', () => setTimeout(resize, 200));
-    resize();
-    $('pad-clear').addEventListener('click', () => pad.clear());
+    function openPad() {
+      before = pad.toData();
+      modal.hidden = false; document.body.classList.add('modal-open');
+      say(padMsg, 'Sign across the line with your finger or mouse.');
+      requestAnimationFrame(() => { resize(); pad.on(); $('pad-done').focus(); });
+    }
+    function closePad() { modal.hidden = true; document.body.classList.remove('modal-open'); pad.off(); $('pad-open').focus(); }
+    $('pad-open').addEventListener('click', openPad);
+    $('pad-clear').addEventListener('click', () => { pad.clear(); say(padMsg, 'Cleared. Sign again.'); });
+    $('pad-cancel').addEventListener('click', () => { pad.clear(); if (before.length) pad.fromData(before); closePad(); });
+    $('pad-done').addEventListener('click', () => {
+      if (pad.isEmpty()) { say(padMsg, 'Please draw your signature first, or press Cancel.', 'err'); return; }
+      preview.src = pad.toDataURL('image/png'); preview.hidden = false; prompt.hidden = true;
+      closePad();
+    });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape' && !modal.hidden) $('pad-cancel').click(); });
+    window.addEventListener('resize', () => { if (!modal.hidden) resize(); });
+    window.addEventListener('orientationchange', () => setTimeout(() => { if (!modal.hidden) resize(); }, 200));
+    pad.off();
   }
 
   const form = $('sign-form'), stepWait = $('sign-step-wait'), stepDone = $('sign-step-done'), steps = $('steps');
@@ -122,7 +139,7 @@
     pollTimer = setInterval(async () => {
       if (Date.now() - pollStart > 30 * 60 * 1000) { clearInterval(pollTimer); say(waitMsg, 'This page has stopped checking. Click the link in the email whenever you find it; it confirms on its own.', 'warn'); return; }
       const { data } = await sb.rpc('signature_confirmed', { p_token: clientToken });
-      if (data === true) { form.reset(); if (pad) pad.clear(); showDone(false); }
+      if (data === true) { form.reset(); clearSig(); showDone(false); }
     }, 3000);
   }
 
@@ -130,7 +147,7 @@
     e.preventDefault();
     if (!form.reportValidity()) return;
     if (form.website.value) return;
-    if (!pad || pad.isEmpty()) { say(msg, 'Please draw your signature.', 'err'); return; }
+    if (!pad || pad.isEmpty()) { say(msg, 'Please tap the signature box and draw your signature.', 'err'); $('pad-open').focus(); return; }
     if (!sb) { say(msg, 'Signing is not switched on yet.', 'err'); return; }
     const email = form.email.value.trim().toLowerCase();
     const community = form.community.value.trim();

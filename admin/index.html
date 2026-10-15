@@ -4,21 +4,31 @@ permalink: /admin/
 ---
 <h1>Organiser dashboard</h1>
 <div id="login" class="card">
-  <p>Organisers sign in with the email registered for their petitions. A one-time sign-in link is emailed to that address.</p>
+  <p class="lead" style="margin-top:0">Sign in with the email registered for your petition. A one-time sign-in link is emailed to that address; nothing to remember.</p>
   <form id="login-form" class="sign-form" onsubmit="return false">
-    <div class="field"><label for="le">Email</label><input id="le" type="email" required></div>
+    <div class="field"><label for="le">Email</label><input id="le" type="email" inputmode="email" autocomplete="email" enterkeyhint="send" required></div>
     <button class="btn btn-primary" id="lb" type="button">Email me a sign-in link</button>
-    <p class="form-msg" id="lm"></p>
+    <p class="form-msg" id="lm" role="status" aria-live="polite"></p>
   </form>
 </div>
 <div id="dash" hidden>
-  <p>Signed in as <span id="who"></span>. <button class="btn btn-small" id="out" type="button">Sign out</button></p>
-  <div class="field"><label for="pet">Petition</label><select id="pet"></select></div>
-  <div class="field"><label for="q">Search names, emails, streets</label><input id="q" type="search" autocomplete="off"></div>
-  <p><button class="btn" id="refresh" type="button">Refresh</button> <button class="btn" id="csv" type="button">Download CSV (council list)</button> <button class="btn" id="csv-stmt" type="button">Download statement volunteers</button> <button class="btn" id="csv-sup" type="button" hidden>Download supporter list</button></p>
+  <p class="dash-bar"><span>Signed in as <strong id="who"></strong></span> <button class="btn btn-small" id="out" type="button">Sign out</button></p>
+  <div class="toolbar">
+    <div class="field"><label for="pet">Petition</label><select id="pet"></select></div>
+    <div class="field"><label for="q">Search</label><input id="q" type="search" autocomplete="off" placeholder="Name, email, street or community"></div>
+  </div>
+  <div class="dash-actions">
+    <ul class="summary" id="stats" aria-live="polite"></ul>
+    <div class="btn-row">
+      <button class="btn btn-small" id="refresh" type="button">Refresh</button>
+      <button class="btn btn-small" id="csv" type="button">CSV for council</button>
+      <button class="btn btn-small" id="csv-stmt" type="button">CSV of statement volunteers</button>
+      <button class="btn btn-small" id="csv-sup" type="button" hidden>CSV of supporters</button>
+    </div>
+  </div>
   <p id="sup-stats" class="muted"></p>
-  <p id="stats" class="muted"></p>
-  <div style="overflow-x:auto"><table id="tbl"><thead><tr><th>Date</th><th>Petition</th><th>Name</th><th>Email</th><th>Address</th><th>Community</th><th>Prov.</th><th>Phone</th><th>Confirmed</th><th>Local</th><th>Paper</th><th>Updates</th><th>Statement</th><th></th></tr></thead><tbody></tbody></table></div>
+  <div class="table-wrap"><table id="tbl"><thead><tr><th>Date</th><th class="col-pet">Petition</th><th>Name</th><th>Email</th><th>Address</th><th>Community</th><th>Prov.</th><th>Phone</th><th>Status</th><th>Local</th><th>Paper</th><th>Updates</th><th>Statement</th><th><span class="vh">Actions</span></th></tr></thead><tbody></tbody></table></div>
+  <p class="hint scroll-hint">Swipe the table sideways to see every column.</p>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script>
@@ -30,21 +40,25 @@ permalink: /admin/
   let rows = [];
   $('lb').onclick = async () => {
     const { error } = await sb.auth.signInWithOtp({ email: $('le').value.trim(), options: { emailRedirectTo: location.origin + base + '/admin/?login=1', shouldCreateUser: false } });
-    $('lm').textContent = error ? error.message : 'Check your email and click the sign-in link. Look in Junk or Spam too.';
+    $('lm').textContent = error ? error.message : 'Check your email and click the sign-in link. Look in Junk or Spam too.'; $('lm').className = 'form-msg ' + (error ? 'err' : 'ok');
   };
   // Arriving from the email link: verify the token, then reload signed in.
   const lp = new URLSearchParams(location.search);
   if (lp.get('token_hash')) {
     const { error } = await sb.auth.verifyOtp({ token_hash: lp.get('token_hash'), type: lp.get('type') || 'magiclink' });
     history.replaceState(null, '', location.pathname);
-    if (error) { $('lm').textContent = 'That link has expired or was already used. Ask for a new one.'; } else { location.reload(); return; }
+    if (error) { $('lm').textContent = 'That link has expired or was already used. Ask for a new one.'; $('lm').className = 'form-msg err'; } else { location.reload(); return; }
   }
+  const tb = document.querySelector('#tbl tbody');
+  const state = (text, kind) => { tb.innerHTML = '<tr><td colspan="14" class="table-state ' + (kind || '') + '">' + text + '</td></tr>'; };
   async function load() {
     const slug = $('pet').value;
+    document.getElementById('tbl').classList.toggle('one-petition', slug !== '__all');
+    state('Loading\u2026');
     const query = sb.from('signatures').select('id,petition_slug,created_at,full_name,street,community,province,postal_code,email,phone,confirmed,in_local_area,paper_signed,consent_updates,consent_statement').order('created_at', { ascending: false });
     const qr = slug === '__all' ? query : query.eq('petition_slug', slug);
     const { data, error } = await qr;
-    if (error) { $('stats').textContent = error.message; return; }
+    if (error) { state('Could not load signatures: ' + error.message + ' Press Refresh to try again.', 'err'); return; }
     rows = data || [];
     render();
   }
@@ -52,12 +66,15 @@ permalink: /admin/
     const term = $('q').value.trim().toLowerCase();
     const shown = term ? rows.filter(r => [r.full_name, r.email, r.street, r.community, r.petition_slug].join(' ').toLowerCase().includes(term)) : rows;
     const conf = rows.filter(r => r.confirmed).length, paper = rows.filter(r => r.paper_signed).length, local = rows.filter(r => r.in_local_area && r.confirmed).length;
-    $('stats').textContent = (term ? shown.length + ' shown of ' : '') + rows.length + ' signatures, ' + conf + ' confirmed, ' + local + ' confirmed in local area, ' + paper + ' also on paper.';
-    const tb = document.querySelector('#tbl tbody'); tb.innerHTML = '';
+    $('stats').innerHTML = (term ? '<li><b>' + shown.length + '</b> shown of ' + rows.length + '</li>' : '<li><b>' + rows.length + '</b> signed</li>') + '<li><b>' + conf + '</b> confirmed</li><li><b>' + local + '</b> local</li><li><b>' + paper + '</b> on paper</li>';
+    tb.innerHTML = '';
+    if (!rows.length) { state('No signatures yet. Share the petition link to get the first one.'); return; }
+    if (!shown.length) { state('Nothing matches \u201c' + $('q').value.trim().replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])) + '\u201d.'); return; }
+    const tick = '<span class="tick"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7"/></svg><span class="vh">yes</span></span>';
     for (const r of shown) {
       const tr = document.createElement('tr');
       const esc = s => String(s == null ? '' : s).replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
-      tr.innerHTML = '<td>' + esc(r.created_at.slice(0,10)) + '</td><td>' + esc(r.petition_slug) + '</td><td>' + esc(r.full_name) + '</td><td>' + esc(r.email) + '</td><td>' + esc(r.street) + '</td><td>' + esc(r.community) + '</td><td>' + esc(r.province) + '</td><td>' + esc(r.phone) + '</td><td>' + (r.confirmed ? 'yes' : 'no') + '</td><td>' + (r.in_local_area ? 'yes' : '') + '</td><td><input type="checkbox" data-id="' + r.id + '" class="paper" ' + (r.paper_signed ? 'checked' : '') + '></td><td>' + (r.consent_updates ? 'yes' : '') + '</td><td>' + (r.consent_statement ? 'yes' : '') + '</td><td><button class="btn btn-small del" data-id="' + r.id + '" type="button">Remove</button></td>';
+      tr.innerHTML = '<td class="num">' + esc(r.created_at.slice(0,10)) + '</td><td class="sub col-pet">' + esc(r.petition_slug) + '</td><td class="name">' + esc(r.full_name) + '</td><td class="sub">' + esc(r.email) + '</td><td>' + esc(r.street) + '</td><td>' + esc(r.community) + '</td><td class="sub">' + esc(r.province) + '</td><td class="num">' + esc(r.phone) + '</td><td>' + (r.confirmed ? '<span class="pill pill-ok">Confirmed</span>' : '<span class="pill pill-wait">Waiting</span>') + '</td><td class="ctr">' + (r.in_local_area ? tick : '') + '</td><td class="ctr"><input type="checkbox" data-id="' + r.id + '" class="paper" aria-label="Also signed on paper" ' + (r.paper_signed ? 'checked' : '') + '></td><td class="ctr">' + (r.consent_updates ? tick : '') + '</td><td class="ctr">' + (r.consent_statement ? tick : '') + '</td><td class="act"><button class="btn btn-small btn-quiet-danger del" data-id="' + r.id + '" type="button">Remove</button></td>';
       tb.appendChild(tr);
     }
     tb.querySelectorAll('.paper').forEach(cb => cb.onchange = async () => { await sb.from('signatures').update({ paper_signed: cb.checked }).eq('id', cb.dataset.id); });

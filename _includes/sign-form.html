@@ -39,18 +39,16 @@
   </div>
 
   <div class="field">
-    <label for="signature-pad">Draw your signature</label>
-    <div class="pad-wrap">
-      <canvas id="signature-pad" width="600" height="160" aria-label="Signature drawing area"></canvas>
-    </div>
-    <div class="pad-actions">
-      <button type="button" class="btn" id="pad-clear">Clear</button>
-      <span class="hint">Finger or mouse. It does not have to be neat.</span>
-    </div>
+    <label for="pad-open">Your signature</label>
+    <button type="button" class="pad-open" id="pad-open" aria-describedby="pad-hint">
+      <img id="pad-preview" alt="Your drawn signature" hidden>
+      <span id="pad-prompt"><svg class="ico" aria-hidden="true" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg> Tap to sign</span>
+    </button>
+    <p class="hint" id="pad-hint">Opens a large signing area. Finger or mouse. It does not have to be neat.</p>
   </div>
 
   <div class="consent">
-    <label class="check"><input type="checkbox" id="consent_updates" name="consent_updates"> Email me about this petition and new petitions in Newfoundland and Labrador. Occasional, unsubscribe any time.</label>
+    <label class="check"><input type="checkbox" id="consent_updates" name="consent_updates"> Keep me updated about this petition. Occasional emails, unsubscribe any time.</label>
     {% if page.ask_statement %}
     <label class="check"><input type="checkbox" id="consent_statement" name="consent_statement"> I am willing to give a written statement about my own experience.</label>
     {% endif %}
@@ -90,4 +88,21 @@
     <a class="btn" href="{{ '/print/' | relative_url }}?p={{ page.slug }}">Print my signing page</a>
   </div>
   {% endif %}
+</div>
+
+<div id="sign-modal" class="sign-modal" role="dialog" aria-modal="true" aria-labelledby="sign-modal-title" hidden>
+  <div class="sign-modal-head">
+    <h3 id="sign-modal-title">Draw your signature</h3>
+    <div class="btn-row">
+      <button type="button" class="btn" id="pad-clear">Clear</button>
+      <button type="button" class="btn" id="pad-cancel">Cancel</button>
+    </div>
+  </div>
+  <div class="pad-wrap" id="pad-wrap">
+    <canvas id="signature-pad" aria-label="Signature drawing area"></canvas>
+  </div>
+  <div class="sign-modal-foot">
+    <p class="hint" id="pad-msg" role="status" aria-live="polite">Sign across the line with your finger or mouse.</p>
+    <button type="button" class="btn btn-primary btn-wide" id="pad-done">Done</button>
+  </div>
 </div>
