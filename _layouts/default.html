@@ -14,9 +14,9 @@
   <script>try { var t = localStorage.getItem('ta-theme'); if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t); } catch (e) {}</script>
   <meta name="theme-color" content="#d52b1e">
   <link rel="canonical" href="{{ page.url | absolute_url }}">
-  <link rel="stylesheet" href="{{ '/assets/css/site.css' | relative_url }}">
+  <link rel="stylesheet" href="{{ '/assets/css/site.css' | relative_url }}?v={{ site.time | date: '%s' }}">
   <script>window.TA = { baseurl: "{{ site.baseurl }}", province: "{{ site.platform.province }}", provinceCode: "{{ site.platform.province_code }}" };</script>
-  <script src="{{ '/assets/js/config.js' | relative_url }}"></script>
+  <script src="{{ '/assets/js/config.js' | relative_url }}?v={{ site.time | date: '%s' }}"></script>
 </head>
 <body>
   <a class="skip" href="#main">Skip to content</a>

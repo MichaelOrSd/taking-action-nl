@@ -171,11 +171,19 @@
     };
     const btn = $('sign-submit'), btnText = btn.textContent; btn.disabled = true; btn.textContent = 'Sending\u2026'; say(msg, '');
     const { error: aErr } = await sb.rpc('add_signature', { s: pending });
+    if (aErr && /DUPLICATE_EMAIL/.test(aErr.message)) {
+      // This email already has a confirmed signature: that is a success, not a fault. Show it as one.
+      btn.classList.add('btn-success'); btn.textContent = 'Already signed. Thank you';
+      await new Promise(r => setTimeout(r, 900));
+      btn.disabled = false; btn.classList.remove('btn-success'); btn.textContent = btnText;
+      clearSig(); showDone(false); stepDone.scrollIntoView({ block: 'start', behavior: 'smooth' });
+      return;
+    }
     if (aErr) { btn.disabled = false; btn.textContent = btnText; say(msg, plainError(aErr), 'err'); msg.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); return; }
     if (wantsUpdates) sb.rpc('join_supporters', { p_email: email, p_name: pending.full_name, p_community: community, p_province: pending.province, p_source: slug }).then(() => {});
     const err = await sendLink(email);
     // The button itself says what happened, since the message under it can sit below the fold.
-    btn.classList.add('btn-success'); btn.textContent = 'Sent. Check your email'; say(msg, '');
+    btn.classList.add('btn-success'); btn.textContent = 'Check your email'; say(msg, '');
     await new Promise(r => setTimeout(r, 900));
     btn.disabled = false; btn.classList.remove('btn-success'); btn.textContent = btnText;
     $('wait-email').textContent = email;
